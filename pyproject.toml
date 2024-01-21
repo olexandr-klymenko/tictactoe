@@ -1,0 +1,21 @@
+[tool.poetry]
+name = "tictactoe"
+version = "0.1.0"
+description = ""
+authors = ["oklymenko <oklymenko@mirantis.com>"]
+
+[tool.poetry.dependencies]
+python = "^3.8"
+Flask-SQLAlchemy = "^3.1.1"
+flask-restx = "^1.3.0"
+Flask-Migrate = "^4.0.5"
+flask-marshmallow = "^1.1.0"
+marshmallow-sqlalchemy = "^0.30.0"
+python-dotenv = "^1.0.0"
+
+[tool.poetry.dev-dependencies]
+
+[build-system]
+requires = ["poetry-core>=1.0.0"]
+build-backend = "poetry.core.masonry.api"
+
