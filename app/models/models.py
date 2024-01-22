@@ -11,11 +11,11 @@ class Player(db.Model):
     age = db.Column(db.Integer, nullable=True)
     country = db.Column(db.String(50), nullable=True)
 
-    moves = db.relationship('TicTacToeMove', backref='player', lazy=True)
+    turns = db.relationship('TicTacToeTurn', backref='player', lazy=True)
 
 
-class TicTacToeMove(db.Model):
-    __tablename__ = "move"
+class TicTacToeTurn(db.Model):
+    __tablename__ = "turn"
     id = db.Column(db.Integer, primary_key=True)
     player_id = db.Column(db.Integer, db.ForeignKey("player.id"), nullable=False)
     row = db.Column(db.Integer, nullable=False)
@@ -28,16 +28,27 @@ class TicTacToeMove(db.Model):
 class TicTacToeGame(db.Model):
     __tablename__ = "game"
     id = db.Column(Integer, primary_key=True)
-    player_X_id = db.Column(Integer, ForeignKey('player.id'), nullable=False)
-    player_O_id = db.Column(Integer, ForeignKey('player.id'), nullable=False)
+    player_x_id = db.Column(Integer, ForeignKey('player.id'), nullable=False)
+    player_o_id = db.Column(Integer, ForeignKey('player.id'), nullable=False)
     current_player_id = db.Column(Integer, ForeignKey('player.id'), nullable=False)
+    winner_id = db.Column(db.Integer, db.ForeignKey('player.id'), default=None)
 
-    player_X = db.relationship("Player", foreign_keys=[player_X_id])
-    player_O = db.relationship("Player", foreign_keys=[player_O_id])
+    player_x = db.relationship("Player", foreign_keys=[player_x_id])
+    player_o = db.relationship("Player", foreign_keys=[player_o_id])
     current_player = db.relationship("Player", foreign_keys=[current_player_id])
-    moves = db.relationship('TicTacToeMove', backref='game', lazy=True)
+    turns = db.relationship('TicTacToeTurn', backref='game', lazy=True)
 
-    def __init__(self, player_X_id, player_O_id):
-        self.player_X_id = player_X_id
-        self.player_O_id = player_O_id
-        self.current_player_id = player_X_id  # Set current player to player X by default
+    @property
+    def players(self):
+        return self.player_x_id, self.player_o_id
+
+    @property
+    def status(self):
+        if self.winner_id or len(self.turns) == 9:
+            return "FINISHED"
+        return "IN PROGRESS"
+
+    def __init__(self, player_x_id, player_o_id):
+        self.player_x_id = player_x_id
+        self.player_o_id = player_o_id
+        self.current_player_id = player_x_id  # Set current player to player X by default

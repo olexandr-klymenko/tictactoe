@@ -1,10 +1,26 @@
 # Model Schemas
+from marshmallow import fields
+
 from app import ma
 
-from .user import User
 
-
-class UserSchema(ma.Schema):
+class BoardSchema(ma.Schema):
     class Meta:
         # Fields to expose, add more if needed.
-        fields = ("email", "name", "username", "joined_date", "role_id")
+        fields = ("player_x", "player_o", "current_player", "board")
+
+    player_x = fields.Function(lambda obj: obj.player_x.name)
+    player_o = fields.Function(lambda obj: obj.player_o.name)
+    current_player = fields.Function(lambda obj: obj.current_player.name)
+
+    # Serialize the board as a 2D matrix
+    board = fields.Method("get_board")
+
+    def get_board(self, obj):
+        board = [["_", "_", "_"], ["_", "_", "_"], ["_", "_", "_"]]
+        for move in obj.turns:
+            if move.player_id == obj.player_x.id:
+                board[move.row-1][move.col-1] = "X"
+            else:
+                board[move.row-1][move.col-1] = "O"
+        return board
