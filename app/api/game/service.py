@@ -1,3 +1,4 @@
+import sqlalchemy
 from flask import current_app
 
 from app import db
@@ -8,8 +9,48 @@ from app.models.schemas import BoardSchema, GameStartSchema
 
 
 class GameBoardService:
-    def make_turn(self, turn):
-        game_id = turn["game_id"]
+    @staticmethod
+    def start_game(data):
+        try:
+            game = TicTacToeGame(
+                player_x_id=data["player_x_id"],
+                player_o_id=data["player_o_id"],
+            )
+            db.session.add(game)
+            db.session.commit()
+            data = GameStartSchema().dump(game)
+            resp = message(True, "Game created")
+            resp["data"] = data
+            return resp, 201
+
+        except sqlalchemy.exc.IntegrityError as error:
+            db.session.rollback()
+            current_app.logger.error(error)
+            return err_resp("An integrity error occurred!", "game_400", 400)
+
+        except Exception as error:
+            db.session.rollback()
+            current_app.logger.error(error)
+            return internal_err_resp()
+
+    @staticmethod
+    def view_board(game_id):
+        """Get game board data by game_id"""
+        if not (game := TicTacToeGame.query.filter_by(id=game_id).first()):
+            return err_resp("Game not found!", "user_404", 404)
+
+        try:
+            board_data = BoardSchema().dump(game)
+            resp = message(True, "Game data sent")
+            resp["data"] = board_data
+            return resp, 200
+
+        except Exception as error:
+            current_app.logger.error(error)
+            return internal_err_resp()
+
+    @staticmethod
+    def make_turn(game_id, turn):
         player_id = turn["player_id"]
         if not (game := TicTacToeGame.query.filter_by(id=game_id).first()):
             return err_resp("Game not found!", "game_404", 404)
@@ -44,32 +85,6 @@ class GameBoardService:
             game.winner_id = player_id
             db.session.commit()
 
-        return message(status=True, message="Turn has been made"), 201
-
-    @staticmethod
-    def view_board(game_id):
-        """Get game board data by game_id"""
-        if not (game := TicTacToeGame.query.filter_by(id=game_id).first()):
-            return err_resp("Game not found!", "user_404", 404)
-
-        try:
-            board_data = BoardSchema().dump(game)
-            resp = message(True, "Game data sent")
-            resp["data"] = board_data
-            return resp, 200
-
-        except Exception as error:
-            current_app.logger.error(error)
-            return internal_err_resp()
-
-    @staticmethod
-    def start_game(data):
-        game = TicTacToeGame(
-            player_x_id=data["player_x_id"], player_o_id=data["player_o_id"]
-        )
-        db.session.add(game)
-        db.session.commit()
-        data = GameStartSchema().dump(game)
-        resp = message(True, "Game created")
-        resp["data"] = data
-        return resp, 201
+        resp = message(status=True, message="Turn has been made")
+        resp["data"] = turn
+        return resp, 200

@@ -48,8 +48,7 @@ Commands:
 
 # Pre-requisites
 
-This boilerplate uses `SQLite` as its database, make sure you have it installed.
-`Pipenv` is recommended to help manage the dependencies and virtualenv.
+`Poetry` is recommended to help manage the dependencies and virtualenv.
 
 You can also use other DBs like `PostGreSQL`, make sure you have it setup and update your `DATABASE_URL` in your configs.
 Read more at [Flask-SQLAlchemy's](https://flask-sqlalchemy.palletsprojects.com/en/2.x/) documentations.

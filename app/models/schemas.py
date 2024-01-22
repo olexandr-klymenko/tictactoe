@@ -19,11 +19,11 @@ class BoardSchema(ma.Schema):
 
     def get_board(self, obj):
         board = [["_", "_", "_"], ["_", "_", "_"], ["_", "_", "_"]]
-        for move in obj.turns:
-            if move.player_id == obj.player_x.id:
-                board[move.row][move.col] = "X"
+        for turn in obj.turns:
+            if turn.player_id == obj.player_x.id:
+                board[turn.row][turn.col] = "X"
             else:
-                board[move.row][move.col] = "O"
+                board[turn.row][turn.col] = "O"
         return board
 
 

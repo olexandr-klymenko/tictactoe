@@ -9,7 +9,7 @@ from tests.utils.base import BaseTestCase
 class TestUserModel(BaseTestCase):
     def test_game_finished_no_empty_cells(self):
         player_x, player_o, game = self.create_players_and_game()
-        moves = [
+        turns = [
             TicTacToeTurn(player_id=player_x.id, row=0, col=0, game_id=game.id),
             TicTacToeTurn(player_id=player_o.id, row=0, col=1, game_id=game.id),
             TicTacToeTurn(player_id=player_x.id, row=0, col=2, game_id=game.id),
@@ -20,7 +20,7 @@ class TestUserModel(BaseTestCase):
             TicTacToeTurn(player_id=player_o.id, row=2, col=1, game_id=game.id),
             TicTacToeTurn(player_id=player_x.id, row=2, col=2, game_id=game.id),
         ]
-        db.session.add_all(moves)
+        db.session.add_all(turns)
         db.session.commit()
 
         self.assertEquals(game.status, "FINISHED")
@@ -33,14 +33,14 @@ class TestUserModel(BaseTestCase):
 
     def test_game_in_progress(self):
         player_x, player_o, game = self.create_players_and_game()
-        moves = [
+        turns = [
             TicTacToeTurn(player_id=player_x.id, row=0, col=0, game_id=game.id),
             TicTacToeTurn(player_id=player_o.id, row=0, col=1, game_id=game.id),
             TicTacToeTurn(player_id=player_x.id, row=0, col=2, game_id=game.id),
             TicTacToeTurn(player_id=player_o.id, row=1, col=0, game_id=game.id),
             TicTacToeTurn(player_id=player_x.id, row=1, col=1, game_id=game.id),
         ]
-        db.session.add_all(moves)
+        db.session.add_all(turns)
         db.session.commit()
 
         self.assertEquals(game.status, "IN PROGRESS")

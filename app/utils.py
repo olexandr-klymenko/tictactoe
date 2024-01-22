@@ -1,11 +1,5 @@
-def message(status, message):
-    response_object = {"status": status, "message": message}
-    return response_object
-
-
-def validation_error(status, errors):
-    response_object = {"status": status, "errors": errors}
-
+def message(status, msg):
+    response_object = {"status": status, "message": msg}
     return response_object
 
 

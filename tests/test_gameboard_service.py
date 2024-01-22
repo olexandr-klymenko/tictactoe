@@ -9,27 +9,15 @@ class TestGameBoardService(BaseTestCase):
     def test_view_board(self):
         player_x, player_o, game = self.create_players_and_game()
 
-        moves = [
-            TicTacToeTurn(
-                player_id=player_x.id, row=0, col=0, game_id=game.id
-            ),
-            TicTacToeTurn(
-                player_id=player_o.id, row=1, col=1, game_id=game.id
-            ),
-            TicTacToeTurn(
-                player_id=player_x.id, row=0, col=1, game_id=game.id
-            ),
-            TicTacToeTurn(
-                player_id=player_o.id, row=0, col=2, game_id=game.id
-            ),
-            TicTacToeTurn(
-                player_id=player_x.id, row=1, col=0, game_id=game.id
-            ),
-            TicTacToeTurn(
-                player_id=player_o.id, row=2, col=0, game_id=game.id
-            ),
+        turns = [
+            TicTacToeTurn(player_id=player_x.id, row=0, col=0, game_id=game.id),
+            TicTacToeTurn(player_id=player_o.id, row=1, col=1, game_id=game.id),
+            TicTacToeTurn(player_id=player_x.id, row=0, col=1, game_id=game.id),
+            TicTacToeTurn(player_id=player_o.id, row=0, col=2, game_id=game.id),
+            TicTacToeTurn(player_id=player_x.id, row=1, col=0, game_id=game.id),
+            TicTacToeTurn(player_id=player_o.id, row=2, col=0, game_id=game.id),
         ]
-        db.session.add_all(moves)
+        db.session.add_all(turns)
         db.session.commit()
         resp = GameBoardService.view_board(game.id)
         self.assertEquals(
@@ -45,12 +33,12 @@ class TestGameBoardService(BaseTestCase):
 
     def test_make_turn_game_not_found(self):
         resp = GameBoardService().make_turn(
-            {
-                "game_id": 1,
+            game_id=999,
+            turn={
                 "player_id": 1,
                 "row": 0,
                 "col": 0,
-            }
+            },
         )
         self.assertEquals(
             resp,
@@ -71,12 +59,12 @@ class TestGameBoardService(BaseTestCase):
         db.session.commit()
 
         resp = GameBoardService().make_turn(
-            {
-                "game_id": game.id,
+            game_id=game.id,
+            turn={
                 "player_id": player_x.id,
                 "row": 0,
                 "col": 0,
-            }
+            },
         )
         self.assertEquals(
             resp,
@@ -102,12 +90,12 @@ class TestGameBoardService(BaseTestCase):
         db.session.commit()
 
         resp = GameBoardService().make_turn(
-            {
-                "game_id": game.id,
+            game_id=game.id,
+            turn={
                 "player_id": player_i.id,
                 "row": 0,
                 "col": 0,
-            }
+            },
         )
         self.assertEquals(
             resp,
@@ -125,12 +113,12 @@ class TestGameBoardService(BaseTestCase):
         player_x, player_o, game = self.create_players_and_game()
 
         resp = GameBoardService().make_turn(
-            {
-                "game_id": game.id,
+            game_id=game.id,
+            turn={
                 "player_id": player_o.id,
                 "row": 0,
                 "col": 0,
-            }
+            },
         )
         self.assertEquals(
             resp,
@@ -153,12 +141,12 @@ class TestGameBoardService(BaseTestCase):
         db.session.commit()
 
         resp = GameBoardService().make_turn(
-            {
-                "game_id": game.id,
+            game_id=game.id,
+            turn={
                 "player_id": player_x.id,
                 "row": 0,
                 "col": 0,
-            }
+            },
         )
 
         self.assertEquals(
@@ -177,12 +165,12 @@ class TestGameBoardService(BaseTestCase):
         player_x, player_o, game = self.create_players_and_game()
 
         resp = GameBoardService().make_turn(
-            {
-                "game_id": game.id,
+            game_id=game.id,
+            turn={
                 "player_id": player_x.id,
                 "row": 3,
                 "col": 0,
-            }
+            },
         )
 
         self.assertEquals(
@@ -201,17 +189,24 @@ class TestGameBoardService(BaseTestCase):
         player_x, player_o, game = self.create_players_and_game()
 
         resp = GameBoardService().make_turn(
-            {
-                "game_id": game.id,
+            game_id=game.id,
+            turn={
                 "player_id": player_x.id,
                 "row": 0,
                 "col": 0,
-            }
+            },
         )
 
         self.assertEquals(
             resp,
-            ({"message": "Turn has been made", "status": True}, 201),
+            (
+                {
+                    "message": "Turn has been made",
+                    "status": True,
+                    "data": {"col": 0, "player_id": 1, "row": 0},
+                },
+                200,
+            ),
         )
         retrieved_game = TicTacToeGame.query.first()
         self.assertEqual(len(retrieved_game.turns), 1)
@@ -220,105 +215,102 @@ class TestGameBoardService(BaseTestCase):
 
     def test_player_turn_to_win_row(self):
         player_x, player_o, game = self.create_players_and_game()
-        moves = [
-            TicTacToeTurn(
-                player_id=player_x.id, row=0, col=0, game_id=game.id
-            ),
-            TicTacToeTurn(
-                player_id=player_o.id, row=1, col=0, game_id=game.id
-            ),
-            TicTacToeTurn(
-                player_id=player_x.id, row=0, col=1, game_id=game.id
-            ),
-            TicTacToeTurn(
-                player_id=player_o.id, row=1, col=1, game_id=game.id
-            ),
+        turns = [
+            TicTacToeTurn(player_id=player_x.id, row=0, col=0, game_id=game.id),
+            TicTacToeTurn(player_id=player_o.id, row=1, col=0, game_id=game.id),
+            TicTacToeTurn(player_id=player_x.id, row=0, col=1, game_id=game.id),
+            TicTacToeTurn(player_id=player_o.id, row=1, col=1, game_id=game.id),
         ]
-        db.session.add_all(moves)
+        db.session.add_all(turns)
         db.session.commit()
 
         resp = GameBoardService().make_turn(
-            {
-                "game_id": game.id,
+            game_id=game.id,
+            turn={
                 "player_id": player_x.id,
                 "row": 0,
                 "col": 2,
-            }
+            },
         )
 
         self.assertEquals(
             resp,
-            ({"message": "Turn has been made", "status": True}, 201),
+            (
+                {
+                    "message": "Turn has been made",
+                    "status": True,
+                    "data": {"col": 2, "player_id": 1, "row": 0},
+                },
+                200,
+            ),
         )
         retrieved_game = TicTacToeGame.query.first()
         self.assertEqual(retrieved_game.winner_id, player_x.id)
 
     def test_player_turn_to_win_col(self):
         player_x, player_o, game = self.create_players_and_game()
-        moves = [
-            TicTacToeTurn(
-                player_id=player_x.id, row=0, col=0, game_id=game.id
-            ),
-            TicTacToeTurn(
-                player_id=player_o.id, row=0, col=1, game_id=game.id
-            ),
-            TicTacToeTurn(
-                player_id=player_x.id, row=1, col=0, game_id=game.id
-            ),
-            TicTacToeTurn(
-                player_id=player_o.id, row=1, col=1, game_id=game.id
-            ),
+        turns = [
+            TicTacToeTurn(player_id=player_x.id, row=0, col=0, game_id=game.id),
+            TicTacToeTurn(player_id=player_o.id, row=0, col=1, game_id=game.id),
+            TicTacToeTurn(player_id=player_x.id, row=1, col=0, game_id=game.id),
+            TicTacToeTurn(player_id=player_o.id, row=1, col=1, game_id=game.id),
         ]
-        db.session.add_all(moves)
+        db.session.add_all(turns)
         db.session.commit()
 
         resp = GameBoardService().make_turn(
-            {
-                "game_id": game.id,
+            game_id=game.id,
+            turn={
                 "player_id": player_x.id,
                 "row": 2,
                 "col": 0,
-            }
+            },
         )
 
         self.assertEquals(
             resp,
-            ({"message": "Turn has been made", "status": True}, 201),
+            (
+                {
+                    "message": "Turn has been made",
+                    "status": True,
+                    "data": {"col": 0, "player_id": 1, "row": 2},
+                },
+                200,
+            ),
         )
         retrieved_game = TicTacToeGame.query.first()
         self.assertEqual(retrieved_game.winner_id, player_x.id)
 
     def test_player_turn_to_win_diagonal(self):
         player_x, player_o, game = self.create_players_and_game()
-        moves = [
-            TicTacToeTurn(
-                player_id=player_x.id, row=0, col=0, game_id=game.id
-            ),
-            TicTacToeTurn(
-                player_id=player_o.id, row=0, col=2, game_id=game.id
-            ),
-            TicTacToeTurn(
-                player_id=player_x.id, row=1, col=1, game_id=game.id
-            ),
-            TicTacToeTurn(
-                player_id=player_o.id, row=2, col=0, game_id=game.id
-            ),
+        turns = [
+            TicTacToeTurn(player_id=player_x.id, row=0, col=0, game_id=game.id),
+            TicTacToeTurn(player_id=player_o.id, row=0, col=2, game_id=game.id),
+            TicTacToeTurn(player_id=player_x.id, row=1, col=1, game_id=game.id),
+            TicTacToeTurn(player_id=player_o.id, row=2, col=0, game_id=game.id),
         ]
-        db.session.add_all(moves)
+        db.session.add_all(turns)
         db.session.commit()
 
         resp = GameBoardService().make_turn(
-            {
-                "game_id": game.id,
+            game_id=game.id,
+            turn={
                 "player_id": player_x.id,
                 "row": 2,
                 "col": 2,
-            }
+            },
         )
 
         self.assertEquals(
             resp,
-            ({"message": "Turn has been made", "status": True}, 201),
+            (
+                {
+                    "message": "Turn has been made",
+                    "status": True,
+                    "data": {"col": 2, "player_id": 1, "row": 2},
+                },
+                200,
+            ),
         )
         retrieved_game = TicTacToeGame.query.first()
         self.assertEqual(retrieved_game.winner_id, player_x.id)
