@@ -27,11 +27,11 @@ def make_shell_context():
 @app.cli.command()
 @click.argument("test_names", nargs=-1)
 def test(test_names):
-    """ Run unit tests """
+    """Run unit tests"""
     import unittest
 
     if test_names:
-        """ Run specific unit tests.
+        """Run specific unit tests.
 
         Example:
         $ flask test tests.test_auth_api tests.test_user_model ...

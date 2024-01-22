@@ -19,7 +19,7 @@ def get_user_data(self, access_token, username):
 
 class TestUserBlueprint(BaseTestCase):
     def test_user_get(self):
-        """ Test getting a user from DB """
+        """Test getting a user from DB"""
 
         # Create a mock user
         username = "test1234"

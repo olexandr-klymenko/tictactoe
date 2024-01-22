@@ -17,5 +17,5 @@ class UserGet(Resource):
         },
     )
     def get(self, username):
-        """ Get a specific user's data by their username """
+        """Get a specific user's data by their username"""
         return UserService.get_user_data(username)

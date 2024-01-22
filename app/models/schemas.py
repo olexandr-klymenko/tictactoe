@@ -20,7 +20,7 @@ class BoardSchema(ma.Schema):
         board = [["_", "_", "_"], ["_", "_", "_"], ["_", "_", "_"]]
         for move in obj.turns:
             if move.player_id == obj.player_x.id:
-                board[move.row-1][move.col-1] = "X"
+                board[move.row][move.col] = "X"
             else:
-                board[move.row-1][move.col-1] = "O"
+                board[move.row][move.col] = "O"
         return board

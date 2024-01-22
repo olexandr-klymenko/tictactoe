@@ -17,5 +17,5 @@ class GameBoardGet(Resource):
         },
     )
     def get(self, username):
-        """ Get a specific user's data by their username """
+        """Get a specific user's data by their username"""
         return GameBoardService.view_board(username)
