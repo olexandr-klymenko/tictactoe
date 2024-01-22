@@ -24,7 +24,7 @@ def test(test_names):
         """Run specific unit tests.
 
         Example:
-        $ flask test tests.test_auth_api tests.test_user_model ...
+        $ flask tests.test_game_service.TestGameService.test_view_board ...
         """
         tests = unittest.TestLoader().loadTestsFromNames(test_names)
 

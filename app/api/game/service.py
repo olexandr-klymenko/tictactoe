@@ -6,7 +6,7 @@ from app.models.models import TicTacToeGame, TicTacToeTurn
 from app.models.schemas import BoardSchema, GameStartSchema
 from app.utils import err_resp, internal_err_resp, message
 
-from .utils import is_cell_already_taken, is_winner
+from .utils import is_cell_already_taken, is_valid_turn, is_winner
 
 
 class GameService:
@@ -68,7 +68,7 @@ class GameService:
         if is_cell_already_taken(turn, game.turns):
             return err_resp("Cell is already taken!", "turn_409", 409)
 
-        if 0 < turn["row"] > 2 or 0 < turn["col"] > 2:
+        if not is_valid_turn(turn):
             return err_resp("Invalid turn!", "turn_400", 400)
 
         db.session.add(

@@ -1,15 +1,4 @@
-from app.models.schemas import BoardSchema
-
-
-def load_data(game_db_obj):
-    """Load user's data
-
-    Parameters:
-    - Game db object
-    """
-    board_schema = BoardSchema()
-    data = board_schema.dump(game_db_obj)
-    return data
+GAME_BOARD_SIZE = 3
 
 
 def is_cell_already_taken(turn, game_turns):
@@ -38,11 +27,11 @@ def is_winner(game_turns, turn):
     col = turn["col"]
 
     # row line
-    if len([t for t in player_turns if t["row"] == row]) == 3:
+    if len([t for t in player_turns if t["row"] == row]) == GAME_BOARD_SIZE:
         return True
 
     # col line
-    if len([t for t in player_turns if t["col"] == col]) == 3:
+    if len([t for t in player_turns if t["col"] == col]) == GAME_BOARD_SIZE:
         return True
 
     # diagonal lines
@@ -56,3 +45,12 @@ def is_winner(game_turns, turn):
         return True
 
     return False
+
+
+def is_valid_turn(turn):
+    if (
+        0 < turn["row"] > GAME_BOARD_SIZE - 1
+        or 0 < turn["col"] > GAME_BOARD_SIZE - 1
+    ):
+        return False
+    return True

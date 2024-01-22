@@ -34,7 +34,7 @@ class Game(Resource):
     )
     @ns.expect(turn_data)
     def put(self, game_id):
-        """Get a specific game data by its id"""
+        """Make a turn"""
         return GameService.make_turn(game_id=game_id, turn=ns.payload)
 
 
