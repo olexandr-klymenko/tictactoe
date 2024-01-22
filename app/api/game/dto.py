@@ -3,7 +3,7 @@ from flask_restx import Namespace, fields
 
 class GameBoardDto:
     api = Namespace("game", description="Game related operations.")
-    data_resp = api.model(
+    view_board = api.model(
         "Game board object",
         {
             "player_x": fields.String,
@@ -27,7 +27,7 @@ class GameBoardDto:
         {"game_id": fields.Integer},
     )
 
-    turn_in = api.model(
+    turn_data = api.model(
         "Turn object",
         {
             "player_id": fields.Integer,

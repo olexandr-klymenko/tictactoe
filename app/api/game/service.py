@@ -8,7 +8,7 @@ from app.models.models import TicTacToeGame, TicTacToeTurn
 from app.models.schemas import BoardSchema, GameStartSchema
 
 
-class GameBoardService:
+class GameService:
     @staticmethod
     def start_game(data):
         try:
@@ -85,6 +85,6 @@ class GameBoardService:
             game.winner_id = player_id
             db.session.commit()
 
-        resp = message(status=True, message="Turn has been made")
+        resp = message(status=True, msg="Turn has been made")
         resp["data"] = turn
         return resp, 200

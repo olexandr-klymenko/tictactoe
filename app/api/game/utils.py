@@ -16,7 +16,10 @@ def is_cell_already_taken(turn, game_turns):
     # Extract the row and column from the provided turn
     # Check if the specified cell coordinates match any of the previous turns
     for previous_turn in [{"row": t.row, "col": t.col} for t in game_turns]:
-        if previous_turn["row"] == turn["row"] and previous_turn["col"] == turn["col"]:
+        if (
+            previous_turn["row"] == turn["row"]
+            and previous_turn["col"] == turn["col"]
+        ):
             return True  # The cell is already taken
 
     return False  # The cell is not taken

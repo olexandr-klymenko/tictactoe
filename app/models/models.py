@@ -1,4 +1,4 @@
-from sqlalchemy import Integer, ForeignKey, DefaultClause, CheckConstraint
+from sqlalchemy import Integer, ForeignKey
 
 from app import db
 
@@ -17,7 +17,9 @@ class Player(db.Model):
 class TicTacToeTurn(db.Model):
     __tablename__ = "turn"
     id = db.Column(db.Integer, primary_key=True)
-    player_id = db.Column(db.Integer, db.ForeignKey("player.id"), nullable=False)
+    player_id = db.Column(
+        db.Integer, db.ForeignKey("player.id"), nullable=False
+    )
     row = db.Column(db.Integer, nullable=False)
     col = db.Column(db.Integer, nullable=False)
     game_id = db.Column(db.Integer, db.ForeignKey("game.id"), nullable=False)
@@ -28,13 +30,17 @@ class TicTacToeGame(db.Model):
     id = db.Column(Integer, primary_key=True)
     player_x_id = db.Column(Integer, ForeignKey("player.id"), nullable=False)
     player_o_id = db.Column(Integer, ForeignKey("player.id"), nullable=False)
-    current_player_id = db.Column(Integer, ForeignKey("player.id"), nullable=False)
+    current_player_id = db.Column(
+        Integer, ForeignKey("player.id"), nullable=False
+    )
     winner_id = db.Column(db.Integer, db.ForeignKey("player.id"), default=None)
 
     player_x = db.relationship("Player", foreign_keys=[player_x_id])
     player_o = db.relationship("Player", foreign_keys=[player_o_id])
     winner = db.relationship("Player", foreign_keys=[winner_id])
-    current_player = db.relationship("Player", foreign_keys=[current_player_id])
+    current_player = db.relationship(
+        "Player", foreign_keys=[current_player_id]
+    )
     turns = db.relationship("TicTacToeTurn", backref="game", lazy=True)
 
     @property

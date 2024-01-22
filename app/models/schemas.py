@@ -12,12 +12,15 @@ class BoardSchema(ma.Schema):
     player_x = fields.Function(lambda obj: obj.player_x.name)
     player_o = fields.Function(lambda obj: obj.player_o.name)
     current_player = fields.Function(lambda obj: obj.current_player.name)
-    winner = fields.Function(lambda obj: obj.winner.name if obj.winner else None)
+    winner = fields.Function(
+        lambda obj: obj.winner.name if obj.winner else None
+    )
 
     # Serialize the board as a 2D matrix
     board = fields.Method("get_board")
 
-    def get_board(self, obj):
+    @staticmethod
+    def get_board(obj):
         board = [["_", "_", "_"], ["_", "_", "_"], ["_", "_", "_"]]
         for turn in obj.turns:
             if turn.player_id == obj.player_x.id:

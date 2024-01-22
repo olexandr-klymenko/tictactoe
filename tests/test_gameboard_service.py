@@ -1,25 +1,37 @@
 from app import db
 from app.models.models import Player, TicTacToeGame, TicTacToeTurn
-from app.api.game.service import GameBoardService
+from app.api.game.service import GameService
 
 from tests.utils.base import BaseTestCase
 
 
-class TestGameBoardService(BaseTestCase):
+class TestGameService(BaseTestCase):
     def test_view_board(self):
         player_x, player_o, game = self.create_players_and_game()
 
         turns = [
-            TicTacToeTurn(player_id=player_x.id, row=0, col=0, game_id=game.id),
-            TicTacToeTurn(player_id=player_o.id, row=1, col=1, game_id=game.id),
-            TicTacToeTurn(player_id=player_x.id, row=0, col=1, game_id=game.id),
-            TicTacToeTurn(player_id=player_o.id, row=0, col=2, game_id=game.id),
-            TicTacToeTurn(player_id=player_x.id, row=1, col=0, game_id=game.id),
-            TicTacToeTurn(player_id=player_o.id, row=2, col=0, game_id=game.id),
+            TicTacToeTurn(
+                player_id=player_x.id, row=0, col=0, game_id=game.id
+            ),
+            TicTacToeTurn(
+                player_id=player_o.id, row=1, col=1, game_id=game.id
+            ),
+            TicTacToeTurn(
+                player_id=player_x.id, row=0, col=1, game_id=game.id
+            ),
+            TicTacToeTurn(
+                player_id=player_o.id, row=0, col=2, game_id=game.id
+            ),
+            TicTacToeTurn(
+                player_id=player_x.id, row=1, col=0, game_id=game.id
+            ),
+            TicTacToeTurn(
+                player_id=player_o.id, row=2, col=0, game_id=game.id
+            ),
         ]
         db.session.add_all(turns)
         db.session.commit()
-        resp = GameBoardService.view_board(game.id)
+        resp = GameService.view_board(game.id)
         self.assertEquals(
             resp[0]["data"],
             {
@@ -32,7 +44,7 @@ class TestGameBoardService(BaseTestCase):
         )
 
     def test_make_turn_game_not_found(self):
-        resp = GameBoardService().make_turn(
+        resp = GameService().make_turn(
             game_id=999,
             turn={
                 "player_id": 1,
@@ -58,7 +70,7 @@ class TestGameBoardService(BaseTestCase):
         db.session.add(game)
         db.session.commit()
 
-        resp = GameBoardService().make_turn(
+        resp = GameService().make_turn(
             game_id=game.id,
             turn={
                 "player_id": player_x.id,
@@ -89,7 +101,7 @@ class TestGameBoardService(BaseTestCase):
         db.session.add(game)
         db.session.commit()
 
-        resp = GameBoardService().make_turn(
+        resp = GameService().make_turn(
             game_id=game.id,
             turn={
                 "player_id": player_i.id,
@@ -112,7 +124,7 @@ class TestGameBoardService(BaseTestCase):
     def test_make_turn_not_current_player(self):
         player_x, player_o, game = self.create_players_and_game()
 
-        resp = GameBoardService().make_turn(
+        resp = GameService().make_turn(
             game_id=game.id,
             turn={
                 "player_id": player_o.id,
@@ -140,7 +152,7 @@ class TestGameBoardService(BaseTestCase):
         )
         db.session.commit()
 
-        resp = GameBoardService().make_turn(
+        resp = GameService().make_turn(
             game_id=game.id,
             turn={
                 "player_id": player_x.id,
@@ -164,7 +176,7 @@ class TestGameBoardService(BaseTestCase):
     def test_invalid_turn(self):
         player_x, player_o, game = self.create_players_and_game()
 
-        resp = GameBoardService().make_turn(
+        resp = GameService().make_turn(
             game_id=game.id,
             turn={
                 "player_id": player_x.id,
@@ -188,7 +200,7 @@ class TestGameBoardService(BaseTestCase):
     def test_player_turn(self):
         player_x, player_o, game = self.create_players_and_game()
 
-        resp = GameBoardService().make_turn(
+        resp = GameService().make_turn(
             game_id=game.id,
             turn={
                 "player_id": player_x.id,
@@ -216,15 +228,23 @@ class TestGameBoardService(BaseTestCase):
     def test_player_turn_to_win_row(self):
         player_x, player_o, game = self.create_players_and_game()
         turns = [
-            TicTacToeTurn(player_id=player_x.id, row=0, col=0, game_id=game.id),
-            TicTacToeTurn(player_id=player_o.id, row=1, col=0, game_id=game.id),
-            TicTacToeTurn(player_id=player_x.id, row=0, col=1, game_id=game.id),
-            TicTacToeTurn(player_id=player_o.id, row=1, col=1, game_id=game.id),
+            TicTacToeTurn(
+                player_id=player_x.id, row=0, col=0, game_id=game.id
+            ),
+            TicTacToeTurn(
+                player_id=player_o.id, row=1, col=0, game_id=game.id
+            ),
+            TicTacToeTurn(
+                player_id=player_x.id, row=0, col=1, game_id=game.id
+            ),
+            TicTacToeTurn(
+                player_id=player_o.id, row=1, col=1, game_id=game.id
+            ),
         ]
         db.session.add_all(turns)
         db.session.commit()
 
-        resp = GameBoardService().make_turn(
+        resp = GameService().make_turn(
             game_id=game.id,
             turn={
                 "player_id": player_x.id,
@@ -250,15 +270,23 @@ class TestGameBoardService(BaseTestCase):
     def test_player_turn_to_win_col(self):
         player_x, player_o, game = self.create_players_and_game()
         turns = [
-            TicTacToeTurn(player_id=player_x.id, row=0, col=0, game_id=game.id),
-            TicTacToeTurn(player_id=player_o.id, row=0, col=1, game_id=game.id),
-            TicTacToeTurn(player_id=player_x.id, row=1, col=0, game_id=game.id),
-            TicTacToeTurn(player_id=player_o.id, row=1, col=1, game_id=game.id),
+            TicTacToeTurn(
+                player_id=player_x.id, row=0, col=0, game_id=game.id
+            ),
+            TicTacToeTurn(
+                player_id=player_o.id, row=0, col=1, game_id=game.id
+            ),
+            TicTacToeTurn(
+                player_id=player_x.id, row=1, col=0, game_id=game.id
+            ),
+            TicTacToeTurn(
+                player_id=player_o.id, row=1, col=1, game_id=game.id
+            ),
         ]
         db.session.add_all(turns)
         db.session.commit()
 
-        resp = GameBoardService().make_turn(
+        resp = GameService().make_turn(
             game_id=game.id,
             turn={
                 "player_id": player_x.id,
@@ -284,15 +312,23 @@ class TestGameBoardService(BaseTestCase):
     def test_player_turn_to_win_diagonal(self):
         player_x, player_o, game = self.create_players_and_game()
         turns = [
-            TicTacToeTurn(player_id=player_x.id, row=0, col=0, game_id=game.id),
-            TicTacToeTurn(player_id=player_o.id, row=0, col=2, game_id=game.id),
-            TicTacToeTurn(player_id=player_x.id, row=1, col=1, game_id=game.id),
-            TicTacToeTurn(player_id=player_o.id, row=2, col=0, game_id=game.id),
+            TicTacToeTurn(
+                player_id=player_x.id, row=0, col=0, game_id=game.id
+            ),
+            TicTacToeTurn(
+                player_id=player_o.id, row=0, col=2, game_id=game.id
+            ),
+            TicTacToeTurn(
+                player_id=player_x.id, row=1, col=1, game_id=game.id
+            ),
+            TicTacToeTurn(
+                player_id=player_o.id, row=2, col=0, game_id=game.id
+            ),
         ]
         db.session.add_all(turns)
         db.session.commit()
 
-        resp = GameBoardService().make_turn(
+        resp = GameService().make_turn(
             game_id=game.id,
             turn={
                 "player_id": player_x.id,
