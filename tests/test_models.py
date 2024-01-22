@@ -1,6 +1,5 @@
 from app import db
 from app.models.models import TicTacToeGame, TicTacToeTurn
-
 from tests.utils.base import BaseTestCase
 
 

@@ -1,4 +1,4 @@
-from sqlalchemy import Integer, ForeignKey
+from sqlalchemy import ForeignKey, Integer
 
 from app import db
 

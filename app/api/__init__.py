@@ -1,5 +1,5 @@
-from flask_restx import Api
 from flask import Blueprint
+from flask_restx import Api
 
 from .game.controller import ns as game_ns
 

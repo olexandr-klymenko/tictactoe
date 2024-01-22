@@ -1,7 +1,7 @@
 from flask_restx import Resource
 
-from .service import GameService
 from .dto import GameBoardDto
+from .service import GameService
 
 ns = GameBoardDto.api
 start_game = GameBoardDto.start_game_in

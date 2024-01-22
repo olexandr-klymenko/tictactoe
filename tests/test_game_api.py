@@ -1,8 +1,7 @@
 import json
 
 from app import db
-from app.models.models import TicTacToeGame, Player, TicTacToeTurn
-
+from app.models.models import Player, TicTacToeGame, TicTacToeTurn
 from tests.utils.base import BaseTestCase
 
 

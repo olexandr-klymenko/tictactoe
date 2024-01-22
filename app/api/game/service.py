@@ -2,10 +2,11 @@ import sqlalchemy
 from flask import current_app
 
 from app import db
-from app.utils import err_resp, message, internal_err_resp
-from .utils import is_cell_already_taken, is_winner
 from app.models.models import TicTacToeGame, TicTacToeTurn
 from app.models.schemas import BoardSchema, GameStartSchema
+from app.utils import err_resp, internal_err_resp, message
+
+from .utils import is_cell_already_taken, is_winner
 
 
 class GameService:

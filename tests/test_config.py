@@ -1,7 +1,8 @@
-import unittest
 import os
+import unittest
 
 from flask import current_app
+
 from app import create_app
 from config import basedir
 

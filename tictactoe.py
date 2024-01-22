@@ -1,8 +1,9 @@
 import os
 
-from dotenv import load_dotenv
 import click
+from dotenv import load_dotenv
 from flask_migrate import Migrate
+
 from app import create_app, db
 
 dotenv_path = os.path.join(os.path.dirname(__file__), ".env")

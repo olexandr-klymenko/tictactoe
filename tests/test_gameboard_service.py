@@ -1,7 +1,6 @@
 from app import db
-from app.models.models import Player, TicTacToeGame, TicTacToeTurn
 from app.api.game.service import GameService
-
+from app.models.models import Player, TicTacToeGame, TicTacToeTurn
 from tests.utils.base import BaseTestCase
 
 

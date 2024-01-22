@@ -8,11 +8,11 @@ This module:
 
 from flask import Flask
 
-# Import extensions
-from .extensions import db, ma
-
 # Import config
 from config import config_by_name
+
+# Import extensions
+from .extensions import db, ma
 
 
 def create_app(config_name):
