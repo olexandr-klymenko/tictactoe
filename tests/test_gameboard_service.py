@@ -10,22 +10,35 @@ class TestGameBoardService(BaseTestCase):
         player_x, player_o, game = self.create_players_and_game()
 
         moves = [
-            TicTacToeTurn(player_id=player_x.id, row=0, col=0, game_id=game.id),
-            TicTacToeTurn(player_id=player_o.id, row=1, col=1, game_id=game.id),
-            TicTacToeTurn(player_id=player_x.id, row=0, col=1, game_id=game.id),
-            TicTacToeTurn(player_id=player_o.id, row=0, col=2, game_id=game.id),
-            TicTacToeTurn(player_id=player_x.id, row=1, col=0, game_id=game.id),
-            TicTacToeTurn(player_id=player_o.id, row=2, col=0, game_id=game.id),
+            TicTacToeTurn(
+                player_id=player_x.id, row=0, col=0, game_id=game.id
+            ),
+            TicTacToeTurn(
+                player_id=player_o.id, row=1, col=1, game_id=game.id
+            ),
+            TicTacToeTurn(
+                player_id=player_x.id, row=0, col=1, game_id=game.id
+            ),
+            TicTacToeTurn(
+                player_id=player_o.id, row=0, col=2, game_id=game.id
+            ),
+            TicTacToeTurn(
+                player_id=player_x.id, row=1, col=0, game_id=game.id
+            ),
+            TicTacToeTurn(
+                player_id=player_o.id, row=2, col=0, game_id=game.id
+            ),
         ]
         db.session.add_all(moves)
         db.session.commit()
         resp = GameBoardService.view_board(game.id)
         self.assertEquals(
-            resp[0]["game"],
+            resp[0]["data"],
             {
                 "player_x": "Test Player 1",
                 "player_o": "Test Player 2",
                 "current_player": "Test Player 1",
+                "winner": None,
                 "board": [["X", "X", "O"], ["X", "O", "_"], ["O", "_", "_"]],
             },
         )
@@ -208,10 +221,18 @@ class TestGameBoardService(BaseTestCase):
     def test_player_turn_to_win_row(self):
         player_x, player_o, game = self.create_players_and_game()
         moves = [
-            TicTacToeTurn(player_id=player_x.id, row=0, col=0, game_id=game.id),
-            TicTacToeTurn(player_id=player_o.id, row=1, col=0, game_id=game.id),
-            TicTacToeTurn(player_id=player_x.id, row=0, col=1, game_id=game.id),
-            TicTacToeTurn(player_id=player_o.id, row=1, col=1, game_id=game.id),
+            TicTacToeTurn(
+                player_id=player_x.id, row=0, col=0, game_id=game.id
+            ),
+            TicTacToeTurn(
+                player_id=player_o.id, row=1, col=0, game_id=game.id
+            ),
+            TicTacToeTurn(
+                player_id=player_x.id, row=0, col=1, game_id=game.id
+            ),
+            TicTacToeTurn(
+                player_id=player_o.id, row=1, col=1, game_id=game.id
+            ),
         ]
         db.session.add_all(moves)
         db.session.commit()
@@ -235,10 +256,18 @@ class TestGameBoardService(BaseTestCase):
     def test_player_turn_to_win_col(self):
         player_x, player_o, game = self.create_players_and_game()
         moves = [
-            TicTacToeTurn(player_id=player_x.id, row=0, col=0, game_id=game.id),
-            TicTacToeTurn(player_id=player_o.id, row=0, col=1, game_id=game.id),
-            TicTacToeTurn(player_id=player_x.id, row=1, col=0, game_id=game.id),
-            TicTacToeTurn(player_id=player_o.id, row=1, col=1, game_id=game.id),
+            TicTacToeTurn(
+                player_id=player_x.id, row=0, col=0, game_id=game.id
+            ),
+            TicTacToeTurn(
+                player_id=player_o.id, row=0, col=1, game_id=game.id
+            ),
+            TicTacToeTurn(
+                player_id=player_x.id, row=1, col=0, game_id=game.id
+            ),
+            TicTacToeTurn(
+                player_id=player_o.id, row=1, col=1, game_id=game.id
+            ),
         ]
         db.session.add_all(moves)
         db.session.commit()
@@ -262,10 +291,18 @@ class TestGameBoardService(BaseTestCase):
     def test_player_turn_to_win_diagonal(self):
         player_x, player_o, game = self.create_players_and_game()
         moves = [
-            TicTacToeTurn(player_id=player_x.id, row=0, col=0, game_id=game.id),
-            TicTacToeTurn(player_id=player_o.id, row=0, col=2, game_id=game.id),
-            TicTacToeTurn(player_id=player_x.id, row=1, col=1, game_id=game.id),
-            TicTacToeTurn(player_id=player_o.id, row=2, col=0, game_id=game.id),
+            TicTacToeTurn(
+                player_id=player_x.id, row=0, col=0, game_id=game.id
+            ),
+            TicTacToeTurn(
+                player_id=player_o.id, row=0, col=2, game_id=game.id
+            ),
+            TicTacToeTurn(
+                player_id=player_x.id, row=1, col=1, game_id=game.id
+            ),
+            TicTacToeTurn(
+                player_id=player_o.id, row=2, col=0, game_id=game.id
+            ),
         ]
         db.session.add_all(moves)
         db.session.commit()

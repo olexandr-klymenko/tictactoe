@@ -33,6 +33,7 @@ class TicTacToeGame(db.Model):
 
     player_x = db.relationship("Player", foreign_keys=[player_x_id])
     player_o = db.relationship("Player", foreign_keys=[player_o_id])
+    winner = db.relationship("Player", foreign_keys=[winner_id])
     current_player = db.relationship("Player", foreign_keys=[current_player_id])
     turns = db.relationship("TicTacToeTurn", backref="game", lazy=True)
 

@@ -28,7 +28,7 @@ def is_winner(game_turns, turn):
         for t in game_turns
         if t.player_id == turn["player_id"]
     ]
-    if len(player_turns) < 3:
+    if len(player_turns) < 3:  # Not enough turns to win
         return False
 
     row = turn["row"]
@@ -46,7 +46,10 @@ def is_winner(game_turns, turn):
     if row + col % 2 == 1:  # turn cell not in any of the corners
         return False
 
-    if {"row": 1, "col": 1} in player_turns:
+    if {
+        "row": 1,
+        "col": 1,
+    } in player_turns:  # diagonal should contain center cell
         return True
 
     return False

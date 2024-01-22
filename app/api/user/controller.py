@@ -3,7 +3,7 @@ from flask_restx import Resource
 from .service import UserService
 from .dto import UserDto
 
-api = UserDto.api
+api = UserDto.ns
 data_resp = UserDto.data_resp
 
 

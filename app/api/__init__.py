@@ -1,7 +1,7 @@
 from flask_restx import Api
 from flask import Blueprint
 
-from .game.controller import api as game_ns
+from .game.controller import ns as game_ns
 
 # Import controller APIs as namespaces.
 api_bp = Blueprint("api", __name__)

@@ -1,29 +1,6 @@
 from flask_restx import Namespace, fields
 
 
-class UserDto:
-    api = Namespace("user", description="User related operations.")
-    user = api.model(
-        "User object",
-        {
-            "email": fields.String,
-            "name": fields.String,
-            "username": fields.String,
-            "joined_date": fields.DateTime,
-            "role_id": fields.Integer,
-        },
-    )
-
-    data_resp = api.model(
-        "User Data Response",
-        {
-            "status": fields.Boolean,
-            "message": fields.String,
-            "user": fields.Nested(user),
-        },
-    )
-
-
 class TurnDto:
     api = Namespace("turn", description="Turn related operations.")
     turn = api.model(
@@ -43,4 +20,31 @@ class TurnDto:
             "message": fields.String,
             "turn": fields.Nested(turn),
         },
+    )
+
+
+class GameBoardDto:
+    api = Namespace("game", description="Game related operations.")
+    data_resp = api.model(
+        "Game board object",
+        {
+            "player_x": fields.String,
+            "player_o": fields.String,
+            "current_player": fields.String,
+            "winner": fields.String,
+            "board": fields.List(fields.List(fields.String)),
+        },
+    )
+
+    start_game_in = api.model(
+        "Start tic-tac-toe game request",
+        {
+            "player_x_id": fields.Integer,
+            "player_o_id": fields.Integer,
+        },
+    )
+
+    start_game_out = api.model(
+        "Start tic-tac-toe game response",
+        {"game_id": fields.Integer},
     )

@@ -4,7 +4,7 @@ from app import db
 from app.utils import err_resp, message, internal_err_resp
 from .utils import is_cell_already_taken, is_winner
 from app.models.models import TicTacToeGame, TicTacToeTurn
-from app.models.schemas import BoardSchema
+from app.models.schemas import BoardSchema, GameStartSchema
 
 
 class GameBoardService:
@@ -53,12 +53,23 @@ class GameBoardService:
             return err_resp("Game not found!", "user_404", 404)
 
         try:
-            board_schema = BoardSchema()
-            board_data = board_schema.dump(game)
+            board_data = BoardSchema().dump(game)
             resp = message(True, "Game data sent")
-            resp["game"] = board_data
+            resp["data"] = board_data
             return resp, 200
 
         except Exception as error:
             current_app.logger.error(error)
             return internal_err_resp()
+
+    @staticmethod
+    def start_game(data):
+        game = TicTacToeGame(
+            player_x_id=data["player_x_id"], player_o_id=data["player_o_id"]
+        )
+        db.session.add(game)
+        db.session.commit()
+        data = GameStartSchema().dump(game)
+        resp = message(True, "Game created")
+        resp["data"] = data
+        return resp, 201
