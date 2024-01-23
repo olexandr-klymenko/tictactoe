@@ -8,8 +8,11 @@ from app.models.models import GameModel, PlayerModel, SeasonModel
 from app.models.schemas import (
     RankingRecordSchema,
     PlayerSchema,
+    ListPlayersSchema,
 )
 from app.utils import internal_err_resp, err_resp
+
+list_player_schema = ListPlayersSchema(many=True)
 
 
 class AdminService:
@@ -41,8 +44,7 @@ class AdminService:
 
     @staticmethod
     def list_players():
-        players = PlayerModel.query.all()
-        return [PlayerSchema().dump(player) for player in players], 200
+        return PlayerModel.query.all()
 
     @staticmethod
     def start_season(data):

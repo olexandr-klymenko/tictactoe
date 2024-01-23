@@ -1,5 +1,6 @@
 from flask_restx import Resource
 
+from app.models.schemas import ListPlayersSchema
 from .dto import AdminDto
 from .service import AdminService
 
@@ -37,21 +38,23 @@ class Players(Resource):
         return AdminService.create_player(data=ns.payload)
 
     @ns.doc("list_players")
-    @ns.marshal_list_with(player)
     def get(self):
         """List players"""
-        return AdminService.list_players()
+        return (
+            ListPlayersSchema(many=True).dump(AdminService.list_players()),
+            200,
+        )
 
 
-@ns.route("/players/<string:player_id>")
+@ns.route("/players/<string:id>")
 class Player(Resource):
     @ns.doc("get_player")
     @ns.marshal_with(player_out)
-    def get(self, player_id):
+    def get(self, id):
         """Get player details"""
-        return AdminService.get_player(player_id)
+        return AdminService.get_player(id)
 
     @ns.doc("delete_players")
-    def delete(self, player_id):
+    def delete(self, id):
         """Delete player"""
-        return AdminService.delete_player(player_id)
+        return AdminService.delete_player(id)

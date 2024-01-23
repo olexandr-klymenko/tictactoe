@@ -87,17 +87,17 @@ class TestAdminBlueprint(BaseTestCase):
             data,
             [
                 {
-                    "age": 21,
-                    "country": "UK",
-                    "email": "test1@example.com",
-                    "id": 1,
+                    "links": {
+                        "collection": "/api/admin/players/",
+                        "self": "/api/admin/players/1",
+                    },
                     "name": "Test Player1",
                 },
                 {
-                    "age": 22,
-                    "country": "US",
-                    "email": "test2@example.com",
-                    "id": 2,
+                    "links": {
+                        "collection": "/api/admin/players/",
+                        "self": "/api/admin/players/2",
+                    },
                     "name": "Test Player2",
                 },
             ],

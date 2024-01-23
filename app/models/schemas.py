@@ -77,3 +77,17 @@ class PlayerSchema(ma.SQLAlchemySchema):
     email = ma.auto_field()
     age = ma.auto_field()
     country = ma.auto_field()
+
+
+class ListPlayersSchema(ma.Schema):
+    class Meta:
+        fields = ("name", "links")
+
+    name = fields.Function(lambda obj: obj.name)
+
+    links = ma.Hyperlinks(
+        {
+            "self": ma.URLFor("api.admin_player", values=dict(id="<id>")),
+            "collection": ma.URLFor("api.admin_players"),
+        }
+    )
