@@ -14,10 +14,16 @@ class BaseTestCase(unittest.TestCase):
         db.create_all()
 
     @staticmethod
-    def create_players_season_game():
-        player_x = PlayerModel(name="Test Player 1", email="test1@example.com")
-        player_o = PlayerModel(name="Test Player 2", email="test2@example.com")
-        season = SeasonModel(name="Test season")
+    def create_players_season_game(
+        player_x_name="Test Player 1",
+        player_x_email="test1@example.com",
+        player_o_name="Test Player 2",
+        player_o_email="test2@example.com",
+        season_name="Test season 1",
+    ):
+        player_x = PlayerModel(name=player_x_name, email=player_x_email)
+        player_o = PlayerModel(name=player_o_name, email=player_o_email)
+        season = SeasonModel(name=season_name)
         db.session.add_all([player_x, player_o, season])
         db.session.commit()
 

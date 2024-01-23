@@ -6,7 +6,6 @@ from app import ma
 
 class BoardSchema(ma.Schema):
     class Meta:
-        # Fields to expose, add more if needed.
         fields = ("player_x", "player_o", "current_player", "winner", "board")
 
     player_x = fields.Function(lambda obj: obj.player_x.name)
@@ -32,7 +31,6 @@ class BoardSchema(ma.Schema):
 
 class GameStartSchema(ma.Schema):
     class Meta:
-        # Fields to expose, add more if needed.
         fields = ("game_id",)
 
     game_id = fields.Function(lambda obj: obj.id)
@@ -40,7 +38,24 @@ class GameStartSchema(ma.Schema):
 
 class SeasonStartSchema(ma.Schema):
     class Meta:
-        # Fields to expose, add more if needed.
         fields = ("name",)
 
     name = fields.Function(lambda obj: obj.name)
+
+
+class SeasonSchema(ma.Schema):
+    class Meta:
+        fields = ("season_id", "season_name")
+
+    season_id = fields.Function(lambda obj: obj["season_id"])
+    season_name = fields.Function(lambda obj: obj["season_name"])
+
+
+class RankingRecordSchema(ma.Schema):
+    class Meta:
+        fields = ("rank", "player_id", "player_name", "total_points")
+
+    rank = fields.Function(lambda obj: obj["rank"])
+    player_id = fields.Function(lambda obj: obj["player_id"])
+    player_name = fields.Function(lambda obj: obj["player_name"])
+    total_points = fields.Function(lambda obj: obj["total_points"])

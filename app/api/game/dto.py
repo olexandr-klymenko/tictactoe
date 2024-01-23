@@ -1,7 +1,7 @@
 from flask_restx import Namespace, fields
 
 
-class GameBoardDto:
+class GameDto:
     api = Namespace("game", description="Game related operations.")
     view_board = api.model(
         "Game board object",

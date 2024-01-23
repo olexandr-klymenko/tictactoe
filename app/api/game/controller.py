@@ -1,12 +1,12 @@
 from flask_restx import Resource
 
-from .dto import GameBoardDto
+from .dto import GameDto
 from .service import GameService
 
-ns = GameBoardDto.api
-start_game = GameBoardDto.start_game_in
-view_board = GameBoardDto.view_board
-turn_data = GameBoardDto.turn_data
+ns = GameDto.api
+start_game = GameDto.start_game_in
+view_board = GameDto.view_board
+turn_data = GameDto.turn_data
 
 
 @ns.route("/<string:game_id>")

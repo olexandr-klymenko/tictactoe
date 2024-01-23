@@ -6,7 +6,7 @@ from app import db
 class PlayerModel(db.Model):
     __tablename__ = "player"
     id = db.Column(db.Integer, primary_key=True)
-    name = db.Column(db.String(50), nullable=False)
+    name = db.Column(db.String(50), unique=True, nullable=False)
     email = db.Column(db.String(120), unique=True, nullable=False)
     age = db.Column(db.Integer, nullable=True)
     country = db.Column(db.String(50), nullable=True)
@@ -77,7 +77,7 @@ class GameModel(db.Model):
 class SeasonModel(db.Model):
     __tablename__ = "season"
     id = db.Column(Integer, primary_key=True)
-    season_name = db.Column(db.String(100))
+    name = db.Column(db.String(100), unique=True, nullable=False)
 
     games = db.relationship("GameModel", backref="season", lazy=True)
 
