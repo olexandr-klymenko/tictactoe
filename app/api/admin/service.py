@@ -7,22 +7,42 @@ from app import db
 from app.models.models import GameModel, PlayerModel, SeasonModel
 from app.models.schemas import (
     RankingRecordSchema,
+    PlayerSchema,
 )
-from app.utils import internal_err_resp
+from app.utils import internal_err_resp, err_resp
 
 
 class AdminService:
     @staticmethod
     def create_player(data):
-        """"""
-
-    @staticmethod
-    def delete_player(player_id):
-        """"""
+        """Create player"""
+        player = PlayerModel(**data)
+        db.session.add(player)
+        db.session.commit()
+        return PlayerSchema().dump(player), 201
 
     @staticmethod
     def get_player(player_id):
-        """"""
+        """Get player by player_id"""
+        player = PlayerModel.query.filter(PlayerModel.id == player_id).first()
+        if not player:
+            return err_resp("Player not found", "player_404", 404)
+        return PlayerSchema().dump(player), 200
+
+    @staticmethod
+    def delete_player(player_id):
+        """Delete player by player_id"""
+        player = PlayerModel.query.filter(PlayerModel.id == player_id).first()
+        if not player:
+            return err_resp("Player not found", "player_404", 404)
+        db.session.delete(player)
+        db.session.commit()
+        return None, 204
+
+    @staticmethod
+    def list_players():
+        players = PlayerModel.query.all()
+        return [PlayerSchema().dump(player) for player in players], 200
 
     @staticmethod
     def start_season(data):

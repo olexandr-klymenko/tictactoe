@@ -1,6 +1,7 @@
 # Model Schemas
 from marshmallow import fields
 
+from .models import PlayerModel
 from app import ma
 
 
@@ -65,3 +66,14 @@ class RankingRecordSchema(ma.Schema):
     player_id = fields.Function(lambda obj: obj["player_id"])
     player_name = fields.Function(lambda obj: obj["player_name"])
     total_points = fields.Function(lambda obj: obj["total_points"])
+
+
+class PlayerSchema(ma.SQLAlchemySchema):
+    class Meta:
+        model = PlayerModel
+
+    id = ma.auto_field()
+    name = ma.auto_field()
+    email = ma.auto_field()
+    age = ma.auto_field()
+    country = ma.auto_field()

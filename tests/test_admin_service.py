@@ -111,3 +111,120 @@ class TestAdminService(BaseTestCase):
                 },
             ],
         )
+
+    def test_create_player(self):
+        resp = AdminService.create_player(
+            {
+                "name": "Test Player",
+                "email": "test@example.com",
+                "age": 18,
+                "country": "US",
+            }
+        )
+        self.assertEqual(
+            resp,
+            (
+                {
+                    "age": 18,
+                    "country": "US",
+                    "email": "test@example.com",
+                    "name": "Test Player",
+                    "id": 1,
+                },
+                201,
+            ),
+        )
+        retrieved_player = PlayerModel.query.first()
+        self.assertEqual(retrieved_player.email, "test@example.com")
+
+    def test_get_player(self):
+        player = PlayerModel(
+            name="Test Player", email="test@example.com", age=20, country="UK"
+        )
+        db.session.add(player)
+        db.session.commit()
+
+        resp = AdminService.get_player(player.id)
+        self.assertEqual(
+            resp,
+            (
+                {
+                    "age": 20,
+                    "country": "UK",
+                    "email": "test@example.com",
+                    "id": 1,
+                    "name": "Test Player",
+                },
+                200,
+            ),
+        )
+
+    def test_get_player_not_found(self):
+        resp = AdminService.get_player(999)
+        self.assertEqual(
+            resp,
+            (
+                {
+                    "error_reason": "player_404",
+                    "message": "Player not found",
+                    "status": False,
+                },
+                404,
+            ),
+        )
+
+    def test_delete_player(self):
+        player = PlayerModel(
+            name="Test Player", email="test@example.com", age=20, country="UK"
+        )
+        db.session.add(player)
+        db.session.commit()
+
+        resp = AdminService.delete_player(player.id)
+        self.assertEqual(
+            resp,
+            (
+                None,
+                204,
+            ),
+        )
+
+    def test_list_players(self):
+        player1 = PlayerModel(
+            name="Test Player1",
+            email="test1@example.com",
+            age=21,
+            country="UK",
+        )
+        player2 = PlayerModel(
+            name="Test Player2",
+            email="test2@example.com",
+            age=22,
+            country="US",
+        )
+        db.session.add_all([player1, player2])
+        db.session.commit()
+
+        resp = AdminService.list_players()
+        self.assertEqual(
+            resp,
+            (
+                [
+                    {
+                        "age": 21,
+                        "country": "UK",
+                        "email": "test1@example.com",
+                        "id": 1,
+                        "name": "Test Player1",
+                    },
+                    {
+                        "age": 22,
+                        "country": "US",
+                        "email": "test2@example.com",
+                        "id": 2,
+                        "name": "Test Player2",
+                    },
+                ],
+                200,
+            ),
+        )

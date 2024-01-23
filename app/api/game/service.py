@@ -1,6 +1,6 @@
 import sqlalchemy
 from flask import current_app
-from sqlalchemy import and_, case, func, or_, not_
+from sqlalchemy import or_, not_
 
 from app import db
 from app.models.models import GameModel, GameTurnModel, SeasonModel

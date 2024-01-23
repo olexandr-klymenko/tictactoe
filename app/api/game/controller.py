@@ -1,5 +1,4 @@
-from flask import request
-from flask_restx import Resource, reqparse
+from flask_restx import Resource
 
 from .dto import GameDto
 from .service import GameService
