@@ -17,7 +17,7 @@ class TestDevelopmentConfig(unittest.TestCase):
         self.assertFalse(current_app is None)
         self.assertTrue(
             app.config["SQLALCHEMY_DATABASE_URI"]
-            == "sqlite:///" + os.path.join(basedir, "data-dev.sqlite")
+            == "sqlite:///" + os.path.join(basedir, "data-dev.sqlite3")
         )
 
 
