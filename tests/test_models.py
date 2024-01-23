@@ -38,13 +38,13 @@ class TestModels(BaseTestCase):
         db.session.add_all(turns)
         db.session.commit()
 
-        self.assertEquals(game.status, "FINISHED")
+        self.assertTrue(game.is_finished)
 
     def test_game_finished_winner(self):
         player_x, player_o, season, game = self.create_players_season_game()
         game.winner_id = player_o.id
         db.session.commit()
-        self.assertEquals(game.status, "FINISHED")
+        self.assertTrue(game.is_finished)
 
     def test_game_in_progress(self):
         player_x, player_o, season, game = self.create_players_season_game()
@@ -68,7 +68,7 @@ class TestModels(BaseTestCase):
         db.session.add_all(turns)
         db.session.commit()
 
-        self.assertEquals(game.status, "IN PROGRESS")
+        self.assertFalse(game.is_finished)
 
     def test_game_switch_current_player(self):
         player_x, player_o, season, game = self.create_players_season_game()

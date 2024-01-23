@@ -57,7 +57,7 @@ class GameService:
         if not (game := GameModel.query.filter_by(id=game_id).first()):
             return err_resp("Game not found!", "game_404", 404)
 
-        if game.status == "FINISHED":
+        if game.is_finished:
             return err_resp("Game finished!", "game_409", 409)
 
         if player_id not in game.players:

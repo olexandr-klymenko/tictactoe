@@ -1,14 +1,14 @@
 from typing import List
 
 from flask import current_app
-from sqlalchemy import func, case, or_, and_
+from sqlalchemy import and_, case, func, or_
 
 from app import db
-from app.models.models import SeasonModel, PlayerModel, GameModel
+from app.models.models import GameModel, PlayerModel, SeasonModel
 from app.models.schemas import (
-    SeasonStartSchema,
     RankingRecordSchema,
     SeasonSchema,
+    SeasonStartSchema,
 )
 from app.utils import internal_err_resp, message
 

@@ -52,10 +52,10 @@ class GameModel(db.Model):
         return self.player_x_id, self.player_o_id
 
     @property
-    def status(self):
-        if self.winner_id or len(self.turns) == 9:
-            return "FINISHED"
-        return "IN PROGRESS"
+    def is_finished(self):
+        return (
+            self.winner_id or len(self.turns) == 9
+        )  # 3 * 3, where 3 is board size
 
     def switch_current_player(self):
         if self.current_player_id == self.player_x_id:
