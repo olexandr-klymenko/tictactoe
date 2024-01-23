@@ -36,21 +36,6 @@ class GameStartSchema(ma.Schema):
     game_id = fields.Function(lambda obj: obj.id)
 
 
-class SeasonStartSchema(ma.Schema):
-    class Meta:
-        fields = ("name",)
-
-    name = fields.Function(lambda obj: obj.name)
-
-
-class SeasonSchema(ma.Schema):
-    class Meta:
-        fields = ("season_id", "season_name")
-
-    season_id = fields.Function(lambda obj: obj["season_id"])
-    season_name = fields.Function(lambda obj: obj["season_name"])
-
-
 class RankingRecordSchema(ma.Schema):
     class Meta:
         fields = ("rank", "player_id", "player_name", "total_points")

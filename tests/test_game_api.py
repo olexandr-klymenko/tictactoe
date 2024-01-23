@@ -19,7 +19,7 @@ class TestGameBlueprint(BaseTestCase):
         db.session.add_all([player_x, player_o, season])
         db.session.commit()
         resp = self.client.post(
-            "/api/game/",
+            "/api/games/",
             json={
                 "player_x_id": player_x.id,
                 "player_o_id": player_o.id,
@@ -28,7 +28,7 @@ class TestGameBlueprint(BaseTestCase):
         self.assertEqual(resp.status_code, 201)
         retrieved_game = GameModel.query.first()
         data = json.loads(resp.data.decode())
-        self.assertEqual(retrieved_game.id, data["data"]["game_id"])
+        self.assertEqual(retrieved_game.id, data["game_id"])
 
     def test_start_game_fail(self):
         """Test starting tic-tac-toe game"""
@@ -37,7 +37,7 @@ class TestGameBlueprint(BaseTestCase):
         db.session.add_all([player_x, season])
         db.session.commit()
         resp = self.client.post(
-            "/api/game/",
+            "/api/games/",
             json={
                 "player_x_id": player_x.id,
                 "player_o_id": 999,
@@ -63,11 +63,11 @@ class TestGameBlueprint(BaseTestCase):
         ]
         db.session.add_all(turns)
         db.session.commit()
-        resp = self.client.get(f"/api/game/{game.id}")
+        resp = self.client.get(f"/api/games/{game.id}")
         game_data = json.loads(resp.data.decode())
 
         self.assertEqual(
-            game_data["data"],
+            game_data,
             {
                 "board": [["X", "_", "O"], ["_", "X", "_"], ["O", "_", "_"]],
                 "current_player": "Test Player 1",
@@ -80,7 +80,7 @@ class TestGameBlueprint(BaseTestCase):
     def test_make_turn(self):
         player_x, player_o, season, game = self.create_players_season_game()
         resp = self.client.put(
-            f"/api/game/{game.id}",
+            f"/api/games/{game.id}",
             json={
                 "player_id": player_x.id,
                 "row": 0,

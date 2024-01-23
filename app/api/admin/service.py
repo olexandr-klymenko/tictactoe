@@ -1,4 +1,4 @@
-from typing import List
+from typing import List, Dict
 
 from flask import current_app
 from sqlalchemy import and_, case, func, or_
@@ -7,10 +7,8 @@ from app import db
 from app.models.models import GameModel, PlayerModel, SeasonModel
 from app.models.schemas import (
     RankingRecordSchema,
-    SeasonSchema,
-    SeasonStartSchema,
 )
-from app.utils import internal_err_resp, message
+from app.utils import internal_err_resp
 
 
 class AdminService:
@@ -41,10 +39,7 @@ class AdminService:
             season = SeasonModel(name=data["name"])
             db.session.add(season)
             db.session.commit()
-            data = SeasonStartSchema().dump(season)
-            resp = message(True, f"Season '{season.name}' started")
-            resp["data"] = data
-            return resp, 201
+            return {"name": data["name"], "season_id": season.id}, 201
 
         except Exception as error:
             db.session.rollback()
@@ -52,7 +47,7 @@ class AdminService:
             return internal_err_resp()
 
     @staticmethod
-    def list_seasons() -> List[SeasonSchema]:
+    def list_seasons() -> List[Dict]:
         """
         List of league seasons from the current one to the oldest.
         """
@@ -62,9 +57,7 @@ class AdminService:
             .all()
         )
         return [
-            SeasonSchema().dump(
-                {"season_id": season_id, "season_name": season_name}
-            )
+            {"season_id": season_id, "name": season_name}
             for season_id, season_name in seasons_query
         ]
 

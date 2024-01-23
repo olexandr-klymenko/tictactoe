@@ -4,7 +4,7 @@ from flask import current_app
 from app import db
 from app.models.models import GameModel, GameTurnModel, SeasonModel
 from app.models.schemas import BoardSchema, GameStartSchema
-from app.utils import err_resp, internal_err_resp, message
+from app.utils import err_resp, internal_err_resp
 
 from .utils import is_cell_already_taken, is_valid_turn, is_winner
 
@@ -20,10 +20,7 @@ class GameService:
             )
             db.session.add(game)
             db.session.commit()
-            data = GameStartSchema().dump(game)
-            resp = message(True, "Game created")
-            resp["data"] = data
-            return resp, 201
+            return GameStartSchema().dump(game), 201
 
         except sqlalchemy.exc.IntegrityError as error:
             db.session.rollback()
@@ -42,10 +39,7 @@ class GameService:
             return err_resp("Game not found!", "user_404", 404)
 
         try:
-            board_data = BoardSchema().dump(game)
-            resp = message(True, "Game data sent")
-            resp["data"] = board_data
-            return resp, 200
+            return BoardSchema().dump(game), 200
 
         except Exception as error:
             current_app.logger.error(error)
@@ -87,6 +81,4 @@ class GameService:
             game.winner_id = player_id
             db.session.commit()
 
-        resp = message(status=True, msg="Turn has been made")
-        resp["data"] = turn
-        return resp, 200
+        return turn, 200

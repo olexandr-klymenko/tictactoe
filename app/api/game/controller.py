@@ -4,26 +4,22 @@ from .dto import GameDto
 from .service import GameService
 
 ns = GameDto.api
-start_game = GameDto.start_game_in
+start_game_in = GameDto.start_game_in
+start_game_out = GameDto.start_game_out
 view_board = GameDto.view_board
 turn_data = GameDto.turn_data
 
 
 @ns.route("/<string:game_id>")
 class Game(Resource):
-    @ns.doc(
-        "View the game board",
-        responses={
-            200: ("Game data successfully sent", view_board),
-            404: "Game not found!",
-        },
-    )
+    @ns.doc("view_board")
+    @ns.marshal_with(view_board)
     def get(self, game_id):
         """Get a specific game data by its id"""
         return GameService.view_board(game_id)
 
     @ns.doc(
-        "Make a turn",
+        "make_turn",
         responses={
             200: ("Game data successfully sent", turn_data),
             400: "Invalid turn",
@@ -33,6 +29,7 @@ class Game(Resource):
         },
     )
     @ns.expect(turn_data)
+    @ns.marshal_with(turn_data)
     def put(self, game_id):
         """Make a turn"""
         return GameService.make_turn(game_id=game_id, turn=ns.payload)
@@ -40,14 +37,9 @@ class Game(Resource):
 
 @ns.route("/")
 class Games(Resource):
-    @ns.doc(
-        "Start the game",
-        responses={
-            201: ("Game successfully started", view_board),
-            400: "Invalid data!",
-        },
-    )
-    @ns.expect(start_game)
+    @ns.doc("start_game")
+    @ns.expect(start_game_in)
+    @ns.marshal_with(start_game_out)
     def post(self):
         """Start a tic-tac-toe game"""
         return GameService.start_game(data=ns.payload)

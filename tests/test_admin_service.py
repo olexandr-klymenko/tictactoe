@@ -15,11 +15,7 @@ class TestAdminService(BaseTestCase):
         self.assertEqual(
             resp,
             (
-                {
-                    "data": {"name": "New season"},
-                    "message": "Season 'New season' started",
-                    "status": True,
-                },
+                {"name": "New season", "season_id": 2},
                 201,
             ),
         )
@@ -30,7 +26,7 @@ class TestAdminService(BaseTestCase):
             }
         )
         retrieved_game = GameModel.query.filter_by(
-            id=resp[0]["data"]["game_id"]
+            id=resp[0]["game_id"]
         ).first()
         self.assertTrue(
             retrieved_game.player_x_id == player_x.id
@@ -57,9 +53,9 @@ class TestAdminService(BaseTestCase):
         self.assertEqual(
             AdminService.list_seasons(),
             [
-                {"season_id": 3, "season_name": "Test season 3"},
-                {"season_id": 2, "season_name": "Test season 2"},
-                {"season_id": 1, "season_name": "Test season 1"},
+                {"season_id": 3, "name": "Test season 3"},
+                {"season_id": 2, "name": "Test season 2"},
+                {"season_id": 1, "name": "Test season 1"},
             ],
         )
 

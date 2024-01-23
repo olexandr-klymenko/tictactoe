@@ -37,14 +37,21 @@ class TestGameService(BaseTestCase):
         db.session.commit()
         resp = GameService.view_board(game.id)
         self.assertEquals(
-            resp[0]["data"],
-            {
-                "player_x": "Test Player 1",
-                "player_o": "Test Player 2",
-                "current_player": "Test Player 1",
-                "winner": None,
-                "board": [["X", "X", "O"], ["X", "O", "_"], ["O", "_", "_"]],
-            },
+            resp,
+            (
+                {
+                    "player_x": "Test Player 1",
+                    "player_o": "Test Player 2",
+                    "current_player": "Test Player 1",
+                    "winner": None,
+                    "board": [
+                        ["X", "X", "O"],
+                        ["X", "O", "_"],
+                        ["O", "_", "_"],
+                    ],
+                },
+                200,
+            ),
         )
 
     def test_start_game(self):
@@ -63,11 +70,7 @@ class TestGameService(BaseTestCase):
         self.assertEquals(
             resp,
             (
-                {
-                    "data": {"game_id": 1},
-                    "message": "Game created",
-                    "status": True,
-                },
+                {"game_id": 1},
                 201,
             ),
         )
@@ -277,9 +280,9 @@ class TestGameService(BaseTestCase):
             resp,
             (
                 {
-                    "message": "Turn has been made",
-                    "status": True,
-                    "data": {"col": 0, "player_id": 1, "row": 0},
+                    "col": 0,
+                    "player_id": 1,
+                    "row": 0,
                 },
                 200,
             ),
@@ -320,11 +323,7 @@ class TestGameService(BaseTestCase):
         self.assertEquals(
             resp,
             (
-                {
-                    "message": "Turn has been made",
-                    "status": True,
-                    "data": {"col": 2, "player_id": 1, "row": 0},
-                },
+                {"col": 2, "player_id": 1, "row": 0},
                 200,
             ),
         )
@@ -362,11 +361,7 @@ class TestGameService(BaseTestCase):
         self.assertEquals(
             resp,
             (
-                {
-                    "message": "Turn has been made",
-                    "status": True,
-                    "data": {"col": 0, "player_id": 1, "row": 2},
-                },
+                {"col": 0, "player_id": 1, "row": 2},
                 200,
             ),
         )
@@ -404,11 +399,7 @@ class TestGameService(BaseTestCase):
         self.assertEquals(
             resp,
             (
-                {
-                    "message": "Turn has been made",
-                    "status": True,
-                    "data": {"col": 2, "player_id": 1, "row": 2},
-                },
+                {"col": 2, "player_id": 1, "row": 2},
                 200,
             ),
         )
