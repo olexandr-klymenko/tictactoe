@@ -36,3 +36,11 @@ class GameStartSchema(ma.Schema):
         fields = ("game_id",)
 
     game_id = fields.Function(lambda obj: obj.id)
+
+
+class SeasonStartSchema(ma.Schema):
+    class Meta:
+        # Fields to expose, add more if needed.
+        fields = ("name",)
+
+    name = fields.Function(lambda obj: obj.name)

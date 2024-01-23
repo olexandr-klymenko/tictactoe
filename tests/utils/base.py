@@ -1,7 +1,7 @@
 import unittest
 
 from app import create_app, db
-from app.models.models import Player, TicTacToeGame
+from app.models.models import GameModel, PlayerModel, SeasonModel
 
 
 class BaseTestCase(unittest.TestCase):
@@ -14,17 +14,21 @@ class BaseTestCase(unittest.TestCase):
         db.create_all()
 
     @staticmethod
-    def create_players_and_game():
-        player_x = Player(name="Test Player 1", email="test1@example.com")
-        player_o = Player(name="Test Player 2", email="test2@example.com")
-        db.session.add(player_x)
-        db.session.add(player_o)
+    def create_players_season_game():
+        player_x = PlayerModel(name="Test Player 1", email="test1@example.com")
+        player_o = PlayerModel(name="Test Player 2", email="test2@example.com")
+        season = SeasonModel(name="Test season")
+        db.session.add_all([player_x, player_o, season])
         db.session.commit()
 
-        game = TicTacToeGame(player_x_id=player_x.id, player_o_id=player_o.id)
+        game = GameModel(
+            player_x_id=player_x.id,
+            player_o_id=player_o.id,
+            season_id=season.id,
+        )
         db.session.add(game)
         db.session.commit()
-        return player_x, player_o, game
+        return player_x, player_o, season, game
 
     def tearDown(self):
         db.session.remove()

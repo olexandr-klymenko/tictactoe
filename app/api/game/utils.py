@@ -15,6 +15,10 @@ def is_cell_already_taken(turn, game_turns):
 
 
 def is_winner(game_turns, turn):
+    """
+    We assume that board size is 3.
+    Otherwise, the is_winner logic would much more complex.
+    """
     player_turns = [
         {"row": t.row, "col": t.col}
         for t in game_turns

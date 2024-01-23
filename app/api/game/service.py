@@ -2,7 +2,7 @@ import sqlalchemy
 from flask import current_app
 
 from app import db
-from app.models.models import TicTacToeGame, TicTacToeTurn
+from app.models.models import GameModel, GameTurnModel, SeasonModel
 from app.models.schemas import BoardSchema, GameStartSchema
 from app.utils import err_resp, internal_err_resp, message
 
@@ -13,9 +13,10 @@ class GameService:
     @staticmethod
     def start_game(data):
         try:
-            game = TicTacToeGame(
+            game = GameModel(
                 player_x_id=data["player_x_id"],
                 player_o_id=data["player_o_id"],
+                season_id=SeasonModel.current_season_id(),
             )
             db.session.add(game)
             db.session.commit()
@@ -37,7 +38,7 @@ class GameService:
     @staticmethod
     def view_board(game_id):
         """Get game board data by game_id"""
-        if not (game := TicTacToeGame.query.filter_by(id=game_id).first()):
+        if not (game := GameModel.query.filter_by(id=game_id).first()):
             return err_resp("Game not found!", "user_404", 404)
 
         try:
@@ -53,7 +54,7 @@ class GameService:
     @staticmethod
     def make_turn(game_id, turn):
         player_id = turn["player_id"]
-        if not (game := TicTacToeGame.query.filter_by(id=game_id).first()):
+        if not (game := GameModel.query.filter_by(id=game_id).first()):
             return err_resp("Game not found!", "game_404", 404)
 
         if game.status == "FINISHED":
@@ -72,7 +73,7 @@ class GameService:
             return err_resp("Invalid turn!", "turn_400", 400)
 
         db.session.add(
-            TicTacToeTurn(
+            GameTurnModel(
                 player_id=player_id,
                 row=turn["row"],
                 col=turn["col"],

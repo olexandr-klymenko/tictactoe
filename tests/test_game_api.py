@@ -1,17 +1,22 @@
 import json
 
 from app import db
-from app.models.models import Player, TicTacToeGame, TicTacToeTurn
+from app.models.models import (
+    GameModel,
+    GameTurnModel,
+    PlayerModel,
+    SeasonModel,
+)
 from tests.utils.base import BaseTestCase
 
 
 class TestGameBlueprint(BaseTestCase):
     def test_start_game(self):
         """Test starting tic-tac-toe game"""
-        player_x = Player(name="Test Player 1", email="test1@example.com")
-        player_o = Player(name="Test Player 2", email="test2@example.com")
-        db.session.add(player_x)
-        db.session.add(player_o)
+        player_x = PlayerModel(name="Test Player 1", email="test1@example.com")
+        player_o = PlayerModel(name="Test Player 2", email="test2@example.com")
+        season = SeasonModel(name="Test season")
+        db.session.add_all([player_x, player_o, season])
         db.session.commit()
         resp = self.client.post(
             "/api/game/",
@@ -21,14 +26,15 @@ class TestGameBlueprint(BaseTestCase):
             },
         )
         self.assertEqual(resp.status_code, 201)
-        retrieved_game = TicTacToeGame.query.first()
+        retrieved_game = GameModel.query.first()
         data = json.loads(resp.data.decode())
         self.assertEqual(retrieved_game.id, data["data"]["game_id"])
 
     def test_start_game_fail(self):
         """Test starting tic-tac-toe game"""
-        player_x = Player(name="Test Player 1", email="test1@example.com")
-        db.session.add(player_x)
+        player_x = PlayerModel(name="Test Player 1", email="test1@example.com")
+        season = SeasonModel(name="Test season")
+        db.session.add_all([player_x, season])
         db.session.commit()
         resp = self.client.post(
             "/api/game/",
@@ -40,18 +46,18 @@ class TestGameBlueprint(BaseTestCase):
         self.assertEqual(resp.status_code, 400)
 
     def test_view_board(self):
-        player_x, player_o, game = self.create_players_and_game()
+        player_x, player_o, season, game = self.create_players_season_game()
         turns = [
-            TicTacToeTurn(
+            GameTurnModel(
                 player_id=player_x.id, row=0, col=0, game_id=game.id
             ),
-            TicTacToeTurn(
+            GameTurnModel(
                 player_id=player_o.id, row=0, col=2, game_id=game.id
             ),
-            TicTacToeTurn(
+            GameTurnModel(
                 player_id=player_x.id, row=1, col=1, game_id=game.id
             ),
-            TicTacToeTurn(
+            GameTurnModel(
                 player_id=player_o.id, row=2, col=0, game_id=game.id
             ),
         ]
@@ -72,7 +78,7 @@ class TestGameBlueprint(BaseTestCase):
         )
 
     def test_make_turn(self):
-        player_x, player_o, game = self.create_players_and_game()
+        player_x, player_o, season, game = self.create_players_season_game()
         resp = self.client.put(
             f"/api/game/{game.id}",
             json={
@@ -82,5 +88,5 @@ class TestGameBlueprint(BaseTestCase):
             },
         )
         self.assertEqual(resp.status_code, 200)
-        retrieved_game = TicTacToeGame.query.first()
+        retrieved_game = GameModel.query.first()
         self.assertEqual(len(retrieved_game.turns), 1)

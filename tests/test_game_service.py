@@ -1,30 +1,35 @@
 from app import db
 from app.api.game.service import GameService
-from app.models.models import Player, TicTacToeGame, TicTacToeTurn
+from app.models.models import (
+    GameModel,
+    GameTurnModel,
+    PlayerModel,
+    SeasonModel,
+)
 from tests.utils.base import BaseTestCase
 
 
 class TestGameService(BaseTestCase):
     def test_view_board(self):
-        player_x, player_o, game = self.create_players_and_game()
+        player_x, player_o, season, game = self.create_players_season_game()
 
         turns = [
-            TicTacToeTurn(
+            GameTurnModel(
                 player_id=player_x.id, row=0, col=0, game_id=game.id
             ),
-            TicTacToeTurn(
+            GameTurnModel(
                 player_id=player_o.id, row=1, col=1, game_id=game.id
             ),
-            TicTacToeTurn(
+            GameTurnModel(
                 player_id=player_x.id, row=0, col=1, game_id=game.id
             ),
-            TicTacToeTurn(
+            GameTurnModel(
                 player_id=player_o.id, row=0, col=2, game_id=game.id
             ),
-            TicTacToeTurn(
+            GameTurnModel(
                 player_id=player_x.id, row=1, col=0, game_id=game.id
             ),
-            TicTacToeTurn(
+            GameTurnModel(
                 player_id=player_o.id, row=2, col=0, game_id=game.id
             ),
         ]
@@ -42,8 +47,63 @@ class TestGameService(BaseTestCase):
             },
         )
 
+    def test_start_game(self):
+        player_x = PlayerModel(name="Test Player 1", email="test1@example.com")
+        player_o = PlayerModel(name="Test Player 2", email="test2@example.com")
+        season = SeasonModel(name="Test season")
+        db.session.add_all([player_x, player_o, season])
+        db.session.commit()
+
+        resp = GameService.start_game(
+            data={
+                "player_x_id": player_x.id,
+                "player_o_id": player_o.id,
+            }
+        )
+        self.assertEquals(
+            resp,
+            (
+                {
+                    "data": {"game_id": 1},
+                    "message": "Game created",
+                    "status": True,
+                },
+                201,
+            ),
+        )
+        retrieved_game = GameModel.query.first()
+        self.assertTrue(
+            retrieved_game.player_x_id == player_x.id
+            and retrieved_game.player_o_id == player_o.id
+            and retrieved_game.season_id == season.id
+        )
+
+    def test_start_game_fail_no_player_o(self):
+        player_x = PlayerModel(name="Test Player 1", email="test1@example.com")
+        season = SeasonModel(name="Test season")
+        db.session.add_all([player_x, season])
+        db.session.commit()
+
+        resp = GameService.start_game(
+            data={
+                "player_x_id": player_x.id,
+                "player_o_id": 999,
+            }
+        )
+        self.assertEquals(
+            resp,
+            (
+                {
+                    "error_reason": "game_400",
+                    "message": "An integrity error occurred!",
+                    "status": False,
+                },
+                400,
+            ),
+        )
+
     def test_make_turn_game_not_found(self):
-        resp = GameService().make_turn(
+        resp = GameService.make_turn(
             game_id=999,
             turn={
                 "player_id": 1,
@@ -64,7 +124,7 @@ class TestGameService(BaseTestCase):
         )
 
     def test_make_turn_game_finished(self):
-        player_x, player_o, game = self.create_players_and_game()
+        player_x, player_o, season, game = self.create_players_season_game()
         game.winner_id = player_x.id
         db.session.add(game)
         db.session.commit()
@@ -90,13 +150,18 @@ class TestGameService(BaseTestCase):
         )
 
     def test_make_turn_not_authorized(self):
-        player_x = Player(name="Test Player 1", email="test1@example.com")
-        player_o = Player(name="Test Player 2", email="test2@example.com")
-        player_i = Player(name="Test Player 3", email="test3@example.com")
-        db.session.add_all([player_x, player_o, player_i])
+        player_x = PlayerModel(name="Test Player 1", email="test1@example.com")
+        player_o = PlayerModel(name="Test Player 2", email="test2@example.com")
+        player_i = PlayerModel(name="Test Player 3", email="test3@example.com")
+        season = SeasonModel(name="Test season")
+        db.session.add_all([player_x, player_o, player_i, season])
         db.session.commit()
 
-        game = TicTacToeGame(player_x_id=player_x.id, player_o_id=player_o.id)
+        game = GameModel(
+            player_x_id=player_x.id,
+            player_o_id=player_o.id,
+            season_id=season.id,
+        )
         db.session.add(game)
         db.session.commit()
 
@@ -121,7 +186,7 @@ class TestGameService(BaseTestCase):
         )
 
     def test_make_turn_not_current_player(self):
-        player_x, player_o, game = self.create_players_and_game()
+        player_x, player_o, season, game = self.create_players_season_game()
 
         resp = GameService().make_turn(
             game_id=game.id,
@@ -144,10 +209,10 @@ class TestGameService(BaseTestCase):
         )
 
     def test_cell_already_taken_by_player(self):
-        player_x, player_o, game = self.create_players_and_game()
+        player_x, player_o, season, game = self.create_players_season_game()
 
         db.session.add(
-            TicTacToeTurn(player_id=player_x.id, row=0, col=0, game_id=game.id)
+            GameTurnModel(player_id=player_x.id, row=0, col=0, game_id=game.id)
         )
         db.session.commit()
 
@@ -173,7 +238,7 @@ class TestGameService(BaseTestCase):
         )
 
     def test_invalid_turn(self):
-        player_x, player_o, game = self.create_players_and_game()
+        player_x, player_o, season, game = self.create_players_season_game()
 
         resp = GameService().make_turn(
             game_id=game.id,
@@ -197,7 +262,7 @@ class TestGameService(BaseTestCase):
         )
 
     def test_player_turn(self):
-        player_x, player_o, game = self.create_players_and_game()
+        player_x, player_o, season, game = self.create_players_season_game()
 
         resp = GameService().make_turn(
             game_id=game.id,
@@ -219,24 +284,24 @@ class TestGameService(BaseTestCase):
                 200,
             ),
         )
-        retrieved_game = TicTacToeGame.query.first()
+        retrieved_game = GameModel.query.first()
         self.assertEqual(len(retrieved_game.turns), 1)
         self.assertEqual(retrieved_game.winner_id, None)
         self.assertEqual(retrieved_game.current_player_id, player_o.id)
 
     def test_player_turn_to_win_row(self):
-        player_x, player_o, game = self.create_players_and_game()
+        player_x, player_o, season, game = self.create_players_season_game()
         turns = [
-            TicTacToeTurn(
+            GameTurnModel(
                 player_id=player_x.id, row=0, col=0, game_id=game.id
             ),
-            TicTacToeTurn(
+            GameTurnModel(
                 player_id=player_o.id, row=1, col=0, game_id=game.id
             ),
-            TicTacToeTurn(
+            GameTurnModel(
                 player_id=player_x.id, row=0, col=1, game_id=game.id
             ),
-            TicTacToeTurn(
+            GameTurnModel(
                 player_id=player_o.id, row=1, col=1, game_id=game.id
             ),
         ]
@@ -263,22 +328,22 @@ class TestGameService(BaseTestCase):
                 200,
             ),
         )
-        retrieved_game = TicTacToeGame.query.first()
+        retrieved_game = GameModel.query.first()
         self.assertEqual(retrieved_game.winner_id, player_x.id)
 
     def test_player_turn_to_win_col(self):
-        player_x, player_o, game = self.create_players_and_game()
+        player_x, player_o, season, game = self.create_players_season_game()
         turns = [
-            TicTacToeTurn(
+            GameTurnModel(
                 player_id=player_x.id, row=0, col=0, game_id=game.id
             ),
-            TicTacToeTurn(
+            GameTurnModel(
                 player_id=player_o.id, row=0, col=1, game_id=game.id
             ),
-            TicTacToeTurn(
+            GameTurnModel(
                 player_id=player_x.id, row=1, col=0, game_id=game.id
             ),
-            TicTacToeTurn(
+            GameTurnModel(
                 player_id=player_o.id, row=1, col=1, game_id=game.id
             ),
         ]
@@ -305,22 +370,22 @@ class TestGameService(BaseTestCase):
                 200,
             ),
         )
-        retrieved_game = TicTacToeGame.query.first()
+        retrieved_game = GameModel.query.first()
         self.assertEqual(retrieved_game.winner_id, player_x.id)
 
     def test_player_turn_to_win_diagonal(self):
-        player_x, player_o, game = self.create_players_and_game()
+        player_x, player_o, season, game = self.create_players_season_game()
         turns = [
-            TicTacToeTurn(
+            GameTurnModel(
                 player_id=player_x.id, row=0, col=0, game_id=game.id
             ),
-            TicTacToeTurn(
+            GameTurnModel(
                 player_id=player_o.id, row=0, col=2, game_id=game.id
             ),
-            TicTacToeTurn(
+            GameTurnModel(
                 player_id=player_x.id, row=1, col=1, game_id=game.id
             ),
-            TicTacToeTurn(
+            GameTurnModel(
                 player_id=player_o.id, row=2, col=0, game_id=game.id
             ),
         ]
@@ -347,5 +412,5 @@ class TestGameService(BaseTestCase):
                 200,
             ),
         )
-        retrieved_game = TicTacToeGame.query.first()
+        retrieved_game = GameModel.query.first()
         self.assertEqual(retrieved_game.winner_id, player_x.id)
