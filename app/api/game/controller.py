@@ -1,4 +1,4 @@
-from flask_restx import Resource
+from flask_restx import Resource, reqparse
 
 from .dto import GameDto
 from .service import GameService
@@ -49,4 +49,9 @@ class Games(Resource):
     @ns.marshal_list_with(game_stat)
     def get(self):
         """List games"""
-        return GameService.list_games()
+        parser = reqparse.RequestParser()
+        parser.add_argument("season_id", type=int, location="args")
+        parser.add_argument("player_id", type=int, location="args")
+        parser.add_argument("is_draw", type=bool, location="args")
+        args = parser.parse_args()
+        return GameService.list_games(**args)
