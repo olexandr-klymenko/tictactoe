@@ -26,12 +26,13 @@ class TestGameBlueprint(BaseTestCase):
             },
         )
         self.assertEqual(resp.status_code, 201)
+
+        # make sure the game is in the database
         retrieved_game = GameModel.query.first()
         data = json.loads(resp.data.decode())
         self.assertEqual(retrieved_game.id, data["game_id"])
 
     def test_start_game_fail(self):
-        """Test starting tic-tac-toe game"""
         player_x = PlayerModel(name="Test Player 1", email="test1@example.com")
         season = SeasonModel(name="Test season")
         db.session.add_all([player_x, season])
@@ -128,5 +129,7 @@ class TestGameBlueprint(BaseTestCase):
             },
         )
         self.assertEqual(resp.status_code, 200)
+
+        # make sure the turn is in the database
         retrieved_game = GameModel.query.first()
         self.assertEqual(len(retrieved_game.turns), 1)
