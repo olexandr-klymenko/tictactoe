@@ -59,17 +59,12 @@ It uses [Black](https://github.com/psf/black) for code styling/formatting.
 
 ## Notes
 
-By default the `/` route is used by the `auth` blueprint.
-
 The rest of the resources are found in `/api` (This is the docs route by default, this can be changed easily).
 
 **Note**: Pipenv seems to have been becoming unmaintained or unsupported, so `virtualenv` is recommended to manage your packages and Python environment, hence why `requirements.txt` has been generated.
 
 ## Installing with Pipenv
 ```sh
-# Clone the repo
-$ git clone https://github.com/X1Zeth2X/flask-restx-boilerplate.git
-
 # Install packages with pipenv
 $ pipenv install
 ```
@@ -93,7 +88,7 @@ FLASK_CONFIG=development
 
 ```sh
 # Enter the virtualenv
-$ pipenv shell
+$ poetry shell
 
 # (Optional for development, recommended)
 $ flask db init # Initializes a new SQLite database.
@@ -104,12 +99,11 @@ $ flask run
 ```
 
 ## Unit testing
-tictactoe has already some unit tests written, we encourage adding more unit tests as you scale.
 
 ```sh
 # Unit testing
 $ flask test
 
 # Run specific unit test(s)
-$ flask test tests.test_auth_api tests.test_user_model ...
+$ flask test test tests.test_models.TestModels.test_game_finished_winner ...
 ```

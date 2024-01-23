@@ -45,6 +45,46 @@ class TestGameBlueprint(BaseTestCase):
         )
         self.assertEqual(resp.status_code, 400)
 
+    def test_list_games(self):
+        self.create_some_games()
+        resp = self.client.get("/api/games/")
+        self.assertEqual(resp.status_code, 200)
+        games_data = json.loads(resp.data.decode())
+        self.assertEqual(
+            games_data,
+            [
+                {
+                    "season_id": 1,
+                    "game_id": 1,
+                    "player_x": "Test player 1",
+                    "player_o": "Test player 2",
+                    "winner": "Test player 1",
+                    "turns": 0,
+                },
+                {
+                    "season_id": 1,
+                    "game_id": 2,
+                    "player_x": "Test player 2",
+                    "player_o": "Test player 3",
+                    "winner": "Test player 2",
+                    "turns": 0,
+                },
+                {
+                    "season_id": 1,
+                    "game_id": 3,
+                    "player_x": "Test player 1",
+                    "player_o": "Test player 3",
+                    "winner": None,
+                    "turns": 0,
+                },
+            ],
+        )
+
+    def test_list_games_filtered(self):
+        self.create_some_games()
+        resp = self.client.get("/api/games/?session_id=1")
+        self.assertEqual(resp.status_code, 200)
+
     def test_view_board(self):
         player_x, player_o, season, game = self.create_players_season_game()
         turns = [

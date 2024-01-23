@@ -1,4 +1,5 @@
-from flask_restx import Resource
+from flask import request
+from flask_restx import Resource, reqparse
 
 from .dto import GameDto
 from .service import GameService
@@ -8,6 +9,7 @@ start_game_in = GameDto.start_game_in
 start_game_out = GameDto.start_game_out
 view_board = GameDto.view_board
 turn_data = GameDto.turn_data
+game_stat = GameDto.game_stat
 
 
 @ns.route("/<string:game_id>")
@@ -43,3 +45,9 @@ class Games(Resource):
     def post(self):
         """Start a tic-tac-toe game"""
         return GameService.start_game(data=ns.payload)
+
+    @ns.doc("list_games")
+    @ns.marshal_list_with(game_stat)
+    def get(self):
+        """List games"""
+        return GameService.list_games()

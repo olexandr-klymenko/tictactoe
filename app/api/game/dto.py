@@ -27,6 +27,18 @@ class GameDto:
         {"game_id": fields.Integer},
     )
 
+    game_stat = api.model(
+        "Game statistic response",
+        {
+            "season_id": fields.Integer,
+            "game_id": fields.Integer,
+            "player_x": fields.String,
+            "player_o": fields.String,
+            "winner": fields.String,
+            "turns": fields.Integer,
+        },
+    )
+
     turn_data = api.model(
         "Turn object",
         {

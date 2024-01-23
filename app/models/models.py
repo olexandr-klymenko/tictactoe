@@ -54,7 +54,7 @@ class GameModel(db.Model):
     @property
     def is_finished(self):
         return (
-            self.winner_id or len(self.turns) == 9
+            self.winner_id is not None or len(self.turns) == 9
         )  # 3 * 3, where 3 is board size
 
     def switch_current_player(self):

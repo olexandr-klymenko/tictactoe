@@ -4,6 +4,34 @@ from marshmallow import fields
 from app import ma
 
 
+class GameStartSchema(ma.Schema):
+    class Meta:
+        fields = ("game_id",)
+
+    game_id = fields.Function(lambda obj: obj.id)
+
+
+class GameSchema(ma.Schema):
+    class Meta:
+        fields = (
+            "season_id",
+            "game_id",
+            "player_x",
+            "player_o",
+            "winner",
+            "turns",
+        )
+
+    season_id = fields.Function(lambda obj: obj.season_id)
+    game_id = fields.Function(lambda obj: obj.id)
+    player_x = fields.Function(lambda obj: obj.player_x.name)
+    player_o = fields.Function(lambda obj: obj.player_o.name)
+    winner = fields.Function(
+        lambda obj: obj.winner.name if obj.winner else None
+    )
+    turns = fields.Function(lambda obj: len(obj.turns))
+
+
 class BoardSchema(ma.Schema):
     class Meta:
         fields = ("player_x", "player_o", "current_player", "winner", "board")
@@ -27,13 +55,6 @@ class BoardSchema(ma.Schema):
             else:
                 board[turn.row][turn.col] = "O"
         return board
-
-
-class GameStartSchema(ma.Schema):
-    class Meta:
-        fields = ("game_id",)
-
-    game_id = fields.Function(lambda obj: obj.id)
 
 
 class RankingRecordSchema(ma.Schema):

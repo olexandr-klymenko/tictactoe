@@ -1,9 +1,10 @@
 import sqlalchemy
 from flask import current_app
+from sqlalchemy import and_, case, func, or_, not_
 
 from app import db
 from app.models.models import GameModel, GameTurnModel, SeasonModel
-from app.models.schemas import BoardSchema, GameStartSchema
+from app.models.schemas import BoardSchema, GameStartSchema, GameSchema
 from app.utils import err_resp, internal_err_resp
 
 from .utils import is_cell_already_taken, is_valid_turn, is_winner
@@ -31,6 +32,26 @@ class GameService:
             db.session.rollback()
             current_app.logger.error(error)
             return internal_err_resp()
+
+    @staticmethod
+    def list_games(season_id=None, player_id=None, is_draw=None):
+        games_query = db.session.query(GameModel)
+        if season_id:
+            games_query = games_query.filter(GameModel.season_id == season_id)
+        if player_id:
+            games_query = games_query.filter(
+                or_(
+                    GameModel.player_x_id == player_id,
+                    GameModel.player_o_id == player_id,
+                )
+            )
+        if is_draw is True:
+            games_query = games_query.filter(GameModel.winner_id.is_(None))
+        elif is_draw is False:
+            games_query = games_query.filter(
+                not_(GameModel.winner_id.is_(None))
+            )
+        return [GameSchema().dump(game) for game in games_query.all()], 200
 
     @staticmethod
     def view_board(game_id):

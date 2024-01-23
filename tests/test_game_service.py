@@ -10,6 +10,97 @@ from tests.utils.base import BaseTestCase
 
 
 class TestGameService(BaseTestCase):
+    def test_start_game(self):
+        player_x = PlayerModel(name="Test Player 1", email="test1@example.com")
+        player_o = PlayerModel(name="Test Player 2", email="test2@example.com")
+        season = SeasonModel(name="Test season")
+        db.session.add_all([player_x, player_o, season])
+        db.session.commit()
+
+        resp = GameService.start_game(
+            data={
+                "player_x_id": player_x.id,
+                "player_o_id": player_o.id,
+            }
+        )
+        self.assertEquals(
+            resp,
+            (
+                {"game_id": 1},
+                201,
+            ),
+        )
+        retrieved_game = GameModel.query.first()
+        self.assertTrue(
+            retrieved_game.player_x_id == player_x.id
+            and retrieved_game.player_o_id == player_o.id
+            and retrieved_game.season_id == season.id
+        )
+
+    def test_list_games_all(self):
+        self.create_some_games()
+        resp = GameService.list_games()
+        self.assertEquals(
+            resp,
+            (
+                [
+                    {
+                        "season_id": 1,
+                        "game_id": 1,
+                        "player_x": "Test player 1",
+                        "player_o": "Test player 2",
+                        "winner": "Test player 1",
+                        "turns": 0,
+                    },
+                    {
+                        "season_id": 1,
+                        "game_id": 2,
+                        "player_x": "Test player 2",
+                        "player_o": "Test player 3",
+                        "winner": "Test player 2",
+                        "turns": 0,
+                    },
+                    {
+                        "season_id": 1,
+                        "game_id": 3,
+                        "player_x": "Test player 1",
+                        "player_o": "Test player 3",
+                        "winner": None,
+                        "turns": 0,
+                    },
+                ],
+                200,
+            ),
+        )
+
+    def test_list_games_draw(self):
+        self.create_some_games()
+        resp = GameService.list_games(is_draw=False)
+        self.assertEquals(
+            resp,
+            (
+                [
+                    {
+                        "season_id": 1,
+                        "game_id": 1,
+                        "player_x": "Test player 1",
+                        "player_o": "Test player 2",
+                        "winner": "Test player 1",
+                        "turns": 0,
+                    },
+                    {
+                        "season_id": 1,
+                        "game_id": 2,
+                        "player_x": "Test player 2",
+                        "player_o": "Test player 3",
+                        "winner": "Test player 2",
+                        "turns": 0,
+                    },
+                ],
+                200,
+            ),
+        )
+
     def test_view_board(self):
         player_x, player_o, season, game = self.create_players_season_game()
 
@@ -52,33 +143,6 @@ class TestGameService(BaseTestCase):
                 },
                 200,
             ),
-        )
-
-    def test_start_game(self):
-        player_x = PlayerModel(name="Test Player 1", email="test1@example.com")
-        player_o = PlayerModel(name="Test Player 2", email="test2@example.com")
-        season = SeasonModel(name="Test season")
-        db.session.add_all([player_x, player_o, season])
-        db.session.commit()
-
-        resp = GameService.start_game(
-            data={
-                "player_x_id": player_x.id,
-                "player_o_id": player_o.id,
-            }
-        )
-        self.assertEquals(
-            resp,
-            (
-                {"game_id": 1},
-                201,
-            ),
-        )
-        retrieved_game = GameModel.query.first()
-        self.assertTrue(
-            retrieved_game.player_x_id == player_x.id
-            and retrieved_game.player_o_id == player_o.id
-            and retrieved_game.season_id == season.id
         )
 
     def test_start_game_fail_no_player_o(self):
