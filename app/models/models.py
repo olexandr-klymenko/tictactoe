@@ -58,6 +58,7 @@ class GameModel(db.Model):
         )  # 3 * 3, where 3 is board size
 
     def switch_current_player(self):
+        """Switch current player after making turn"""
         if self.current_player_id == self.player_x_id:
             self.current_player_id = self.player_o_id
         else:

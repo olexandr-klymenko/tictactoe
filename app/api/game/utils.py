@@ -30,15 +30,15 @@ def is_winner(game_turns, turn):
     row = turn["row"]
     col = turn["col"]
 
-    # row line
+    # check vertical line
     if len([t for t in player_turns if t["row"] == row]) == GAME_BOARD_SIZE:
         return True
 
-    # col line
+    # check horizontal line
     if len([t for t in player_turns if t["col"] == col]) == GAME_BOARD_SIZE:
         return True
 
-    # diagonal lines
+    # check diagonal lines
     if row + col % 2 == 1:  # turn cell not in any of the corners
         return False
 
@@ -52,6 +52,7 @@ def is_winner(game_turns, turn):
 
 
 def is_valid_turn(turn):
+    """Check if turn cell is within the board"""
     if (
         0 < turn["row"] > GAME_BOARD_SIZE - 1
         or 0 < turn["col"] > GAME_BOARD_SIZE - 1

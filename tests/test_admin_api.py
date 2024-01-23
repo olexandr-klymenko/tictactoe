@@ -37,6 +37,37 @@ class TestAdminBlueprint(BaseTestCase):
             ],
         )
 
+    def test_ranking_table(self):
+        # prepare test data
+        self.create_some_games()
+
+        resp = self.client.get("/api/admin/ranking/")
+        self.assertEqual(resp.status_code, 200)
+        data = json.loads(resp.data.decode())
+        self.assertEqual(
+            data,
+            [
+                {
+                    "player_id": 2,
+                    "player_name": "Test player 2",
+                    "rank": 1,
+                    "total_points": 3,
+                },
+                {
+                    "player_id": 1,
+                    "player_name": "Test player 1",
+                    "rank": 2,
+                    "total_points": 2,
+                },
+                {
+                    "player_id": 3,
+                    "player_name": "Test player 3",
+                    "rank": 3,
+                    "total_points": 1,
+                },
+            ],
+        )
+
     def test_create_player(self):
         resp = self.client.post(
             "/api/admin/players/",
@@ -65,6 +96,7 @@ class TestAdminBlueprint(BaseTestCase):
         self.assertEqual(retrieved_player.email, "test1@example.com")
 
     def test_list_players(self):
+        # prepare test data
         player1 = PlayerModel(
             name="Test Player1",
             email="test1@example.com",
@@ -104,6 +136,7 @@ class TestAdminBlueprint(BaseTestCase):
         )
 
     def test_get_player(self):
+        # prepare test data
         player = PlayerModel(
             name="Test Player",
             email="test@example.com",
@@ -128,6 +161,7 @@ class TestAdminBlueprint(BaseTestCase):
         )
 
     def test_delete_player(self):
+        # prepare test data
         player = PlayerModel(
             name="Test Player",
             email="test@example.com",

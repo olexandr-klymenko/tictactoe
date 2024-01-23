@@ -28,6 +28,15 @@ class Seasons(Resource):
         return AdminService.list_seasons()
 
 
+@ns.route("/ranking/")
+class RankingTable(Resource):
+    """Endpoint for rendering ranking table"""
+
+    @ns.doc("ranking_table")
+    def get(self):
+        return AdminService.ranking_table()
+
+
 @ns.route("/players/")
 class Players(Resource):
     @ns.doc("create_player")

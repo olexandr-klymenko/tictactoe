@@ -51,7 +51,7 @@ class GameService:
             games_query = games_query.filter(
                 not_(GameModel.winner_id.is_(None))
             )
-        return [GameSchema().dump(game) for game in games_query.all()], 200
+        return GameSchema(many=True).dump(games_query.all()), 200
 
     @staticmethod
     def view_board(game_id):
@@ -72,16 +72,22 @@ class GameService:
         if not (game := GameModel.query.filter_by(id=game_id).first()):
             return err_resp("Game not found!", "game_404", 404)
 
-        if game.is_finished:
+        if game.is_finished:  # Turn can't be made in the finished game
             return err_resp("Game finished!", "game_409", 409)
 
-        if player_id not in game.players:
+        if (
+            player_id not in game.players
+        ):  # Player doesn't participate in the game
             return err_resp("Player not authorized!", "player_403", 403)
 
-        if player_id != game.current_player_id:
+        if (
+            player_id != game.current_player_id
+        ):  # This is not turn of the player
             return err_resp("Not your turn!", "player_403", 403)
 
-        if is_cell_already_taken(turn, game.turns):
+        if is_cell_already_taken(
+            turn, game.turns
+        ):  # This cell was taken by one of the previous turns
             return err_resp("Cell is already taken!", "turn_409", 409)
 
         if not is_valid_turn(turn):
@@ -96,10 +102,12 @@ class GameService:
             ),
         )
         game.switch_current_player()
-        db.session.commit()
 
-        if is_winner(game_turns=game.turns, turn=turn):
+        if is_winner(
+            game_turns=game.turns, turn=turn
+        ):  # Check if the turn wins the game
             game.winner_id = player_id
-            db.session.commit()
+
+        db.session.commit()
 
         return turn, 200

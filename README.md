@@ -1,17 +1,10 @@
 # tictactoe
 
-An awesome REST boilerplate that uses Flask-RESTX (formerly Flask-RESTPlus).
-It has the usual API features to get you started and off the ground,
-it's also designed to be easily scalable and extendable.
-
-I wrote this boilerplate because I found that a lot of Flask REST boilerplates are either
-doing too much, is lacking, or it simply doesn't fit my needs.
-
+A Tic-tac-toe game
 
 # Features
 
-* Full featured framework for fast, easy, and documented API with [Flask-RESTX](https://flask-restx.readthedocs.io/en/latest/)
-* JSON Web Token Authentication with [Flask-JWT-Extended](https://flask-jwt-extended.readthedocs.io/en/stable/)
+* Full-featured framework for fast, easy, and documented API with [Flask-RESTX](https://flask-restx.readthedocs.io/en/latest/)
 * Swagger Documentation (Part of Flask-RESTX).
 * Unit Testing.
 * Database ORM with [Flask-SQLAlchemy](https://flask-sqlalchemy.palletsprojects.com/en/2.x/)
@@ -61,12 +54,10 @@ It uses [Black](https://github.com/psf/black) for code styling/formatting.
 
 The rest of the resources are found in `/api` (This is the docs route by default, this can be changed easily).
 
-**Note**: Pipenv seems to have been becoming unmaintained or unsupported, so `virtualenv` is recommended to manage your packages and Python environment, hence why `requirements.txt` has been generated.
-
-## Installing with Pipenv
+## Installing with Poetry
 ```sh
-# Install packages with pipenv
-$ pipenv install
+# Install packages with poetry
+$ poetry install
 ```
 
 ## Running

@@ -21,6 +21,7 @@ class BaseTestCase(unittest.TestCase):
         player_o_email="test2@example.com",
         season_name="Test season 1",
     ):
+        """Create test players, season and game of those players"""
         player_x = PlayerModel(name=player_x_name, email=player_x_email)
         player_o = PlayerModel(name=player_o_name, email=player_o_email)
         season = SeasonModel(name=season_name)
@@ -38,6 +39,7 @@ class BaseTestCase(unittest.TestCase):
 
     @staticmethod
     def create_some_games():
+        """Create some test games"""
         player_1 = PlayerModel(name="Test player 1", email="test1@example.com")
         player_2 = PlayerModel(name="Test player 2", email="test2@example.com")
         player_3 = PlayerModel(name="Test player 3", email="test3@example.com")
@@ -66,9 +68,9 @@ class BaseTestCase(unittest.TestCase):
 
         db.session.add_all([game1, game2, game3])
         db.session.commit()
-        return game1, game2, game3
 
     def tearDown(self):
+        """Cleanup database"""
         db.session.remove()
         db.drop_all()
         self.app_context.pop()

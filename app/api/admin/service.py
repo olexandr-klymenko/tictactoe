@@ -44,18 +44,14 @@ class AdminService:
 
     @staticmethod
     def list_players():
+        """List all players"""
         return PlayerModel.query.all()
 
     @staticmethod
     def start_season(data):
         """
         Start new league season.
-        Set current season id to this one.
-        Args:
-            data:
-
-        Returns:
-
+        (Sets current season id to this one's id).
         """
         try:
             season = SeasonModel(name=data["name"])
@@ -84,15 +80,12 @@ class AdminService:
         ]
 
     @staticmethod
-    def ranking_table(season_id: int = None) -> List[RankingRecordSchema]:
+    def ranking_table(season_id: int = None):
         """
         Build ranking table for given season.
         If season_id is not set build table for current season.
         Players that didn't play in the season don't showed in the table.
-        Args:
-            season_id:
-        Returns:
-            List of RankingRecordSchema
+
         Examples:
             [
                 {
@@ -159,13 +152,11 @@ class AdminService:
             ranking_results, start=1
         ):
             resp.append(
-                RankingRecordSchema().dump(
-                    {
-                        "rank": rank,
-                        "player_id": player_id,
-                        "player_name": player_name,
-                        "total_points": total_points,
-                    }
-                )
+                {
+                    "rank": rank,
+                    "player_id": player_id,
+                    "player_name": player_name,
+                    "total_points": total_points,
+                }
             )
-        return resp
+        return RankingRecordSchema(many=True).dump(resp), 200
