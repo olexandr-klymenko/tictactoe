@@ -53,6 +53,10 @@ class GameModel(db.Model):
 
     @property
     def is_finished(self):
+        """
+        The game considered to be finished if there is a winner
+        or all cells are taken
+        """
         return (
             self.winner_id is not None or len(self.turns) == 9
         )  # 3 * 3, where 3 is board size
@@ -67,9 +71,10 @@ class GameModel(db.Model):
         db.session.commit()
 
     def __init__(self, player_x_id, player_o_id, season_id):
+        """Takes ids of the first and the second players and season id"""
         self.player_x_id = player_x_id
         self.player_o_id = player_o_id
-        self.season_id = season_id
+        self.season_id = season_id  # current season id
         self.current_player_id = (
             player_x_id  # Set current player to player X by default
         )
@@ -84,6 +89,10 @@ class SeasonModel(db.Model):
 
     @classmethod
     def current_season_id(cls):
+        """
+        Assuming that primary key is integer.
+        Therefore, the current season is the last added one.
+        """
         return cls.query.order_by(cls.id.desc()).first().id
 
     def __init__(self, name):

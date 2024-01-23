@@ -7,7 +7,7 @@ from app.models.models import GameModel, GameTurnModel, SeasonModel
 from app.models.schemas import BoardSchema, GameStartSchema, GameSchema
 from app.utils import err_resp, internal_err_resp
 
-from .utils import is_cell_already_taken, is_valid_turn, is_winner
+from .game_utils import is_cell_already_taken, is_valid_turn, is_winner
 
 
 class GameService:

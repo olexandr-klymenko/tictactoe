@@ -1,4 +1,3 @@
-# Model Schemas
 from marshmallow import fields
 
 from .models import PlayerModel
@@ -34,6 +33,8 @@ class GameSchema(ma.Schema):
 
 
 class BoardSchema(ma.Schema):
+    """The schema for game model into readable board details"""
+
     class Meta:
         fields = ("player_x", "player_o", "current_player", "winner", "board")
 
@@ -49,7 +50,17 @@ class BoardSchema(ma.Schema):
 
     @staticmethod
     def get_board(obj):
-        board = [["_", "_", "_"], ["_", "_", "_"], ["_", "_", "_"]]
+        """
+        Render game board.
+        '_': empty cell
+        'X': cell taken by the first player
+        'O': cell taken by the second player
+        """
+        board = [
+            ["_", "_", "_"],
+            ["_", "_", "_"],
+            ["_", "_", "_"],
+        ]  # fill board with empty cells
         for turn in obj.turns:
             if turn.player_id == obj.player_x.id:
                 board[turn.row][turn.col] = "X"
