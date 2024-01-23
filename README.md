@@ -82,8 +82,8 @@ FLASK_CONFIG=development
 $ poetry shell
 
 # (Optional for development, recommended)
-$ flask db init # Initializes a new SQLite database.
-$ flask db migrate # Creates the tables in the database.
+$ flask db init # Creates a new migration repository
+$ flask db upgrade # Upgrade to a later version
 
 # Run the app
 $ flask run

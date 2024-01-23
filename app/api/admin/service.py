@@ -4,7 +4,12 @@ from flask import current_app
 from sqlalchemy import and_, case, func, or_
 
 from app import db
-from app.models.models import GameModel, PlayerModel, SeasonModel
+from app.models.models import (
+    GameModel,
+    PlayerModel,
+    SeasonModel,
+    GameTurnModel,
+)
 from app.models.schemas import (
     RankingRecordSchema,
     PlayerSchema,
@@ -38,6 +43,15 @@ class AdminService:
         player = PlayerModel.query.filter(PlayerModel.id == player_id).first()
         if not player:
             return err_resp("Player not found", "player_404", 404)
+        player_turns = GameTurnModel.query.filter(
+            GameTurnModel.player_id == player_id
+        ).all()
+        if player_turns:
+            return err_resp(
+                "There are games that player participated in",
+                "player_409",
+                409,
+            )
         db.session.delete(player)
         db.session.commit()
         return None, 204

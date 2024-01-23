@@ -12,11 +12,14 @@ class Config:
 class DevelopmentConfig(Config):
     DEBUG = True
     SQLALCHEMY_DATABASE_URI = os.environ.get(
-        "DATABASE_URL", "sqlite:///" + os.path.join(basedir, "data-dev.sqlite")
+        "DATABASE_URL",
+        "sqlite:///"
+        + os.path.join(
+            basedir, "data-dev.sqlite3"
+        ),  # Don't try to rename db file extension. Otherwise, it won't work:
+        # sqlite3.OperationalError no such table ... error
     )
     SQLALCHEMY_TRACK_MODIFICATIONS = False
-
-    # Add logger
 
 
 class TestingConfig(Config):
@@ -31,7 +34,12 @@ class TestingConfig(Config):
 class ProductionConfig(Config):
     DEBUG = False
     SQLALCHEMY_DATABASE_URI = os.environ.get(
-        "DATABASE_URL", "sqlite:///" + os.path.join(basedir, "data.sqlite")
+        "DATABASE_URL",
+        "sqlite:///"
+        + os.path.join(
+            basedir, "data.sqlite3"
+        ),  # Don't try to rename db file extension. Otherwise, it won't work.
+        # sqlite3.OperationalError no such table ... error
     )
     SQLALCHEMY_TRACK_MODIFICATIONS = False
 
