@@ -81,7 +81,6 @@ FLASK_CONFIG=development
 # Enter the virtualenv
 $ poetry shell
 
-# (Optional for development, recommended)
 $ flask db init # Creates a new migration repository
 $ flask db upgrade # Upgrade to a later version
 
