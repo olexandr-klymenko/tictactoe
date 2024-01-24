@@ -99,6 +99,8 @@ class Players(Resource):
 
 
 @ns.route("/players/<string:id>")
+@ns.response(404, "Player not found")
+@ns.param("id", "The Player identifier")
 class Player(Resource):
     @ns.doc("get_player")
     @ns.marshal_with(player_out)
@@ -107,6 +109,7 @@ class Player(Resource):
         return AdminService.get_player(id)
 
     @ns.doc("delete_players")
+    @ns.response(409, "There are games that player participated in")
     def delete(self, id):
         """Delete player"""
         return AdminService.delete_player(id)

@@ -1,11 +1,14 @@
-import sqlalchemy
-from flask import current_app
 from sqlalchemy import or_, not_
 
 from app import db
-from app.models.models import GameModel, GameTurnModel, SeasonModel
+from app.models.models import (
+    GameModel,
+    GameTurnModel,
+    SeasonModel,
+    PlayerModel,
+)
 from app.models.schemas import BoardSchema, GameStartSchema, GameSchema
-from app.utils import err_resp, internal_err_resp
+from app.utils import err_resp
 
 from .game_utils import is_cell_already_taken, is_valid_turn, is_winner
 
@@ -13,25 +16,33 @@ from .game_utils import is_cell_already_taken, is_valid_turn, is_winner
 class GameService:
     @staticmethod
     def start_game(data):
-        try:
-            game = GameModel(
-                player_x_id=data["player_x_id"],
-                player_o_id=data["player_o_id"],
-                season_id=SeasonModel.current_season_id(),
+        if data["player_x_id"] == data["player_o_id"]:
+            return err_resp(
+                "Can't start game with one player", "game_400", 400
             )
-            db.session.add(game)
-            db.session.commit()
-            return GameStartSchema().dump(game), 201
 
-        except sqlalchemy.exc.IntegrityError as error:
-            db.session.rollback()
-            current_app.logger.error(error)
-            return err_resp("An integrity error occurred!", "game_400", 400)
+        # Make sure player 1 is in the database
+        player_x = PlayerModel.query.filter(
+            PlayerModel.id == data["player_x_id"]
+        ).first()
+        if not player_x:
+            return err_resp("Player 1 not found!", "player_404", 404)
 
-        except Exception as error:
-            db.session.rollback()
-            current_app.logger.error(error)
-            return internal_err_resp()
+        # Make sure player 2 is in the database
+        player_o = PlayerModel.query.filter(
+            PlayerModel.id == data["player_o_id"]
+        ).first()
+        if not player_o:
+            return err_resp("Player 2 not found!", "player_404", 404)
+
+        game = GameModel(
+            player_x_id=data["player_x_id"],
+            player_o_id=data["player_o_id"],
+            season_id=SeasonModel.current_season_id(),
+        )
+        db.session.add(game)
+        db.session.commit()
+        return GameStartSchema().dump(game), 201
 
     @staticmethod
     def list_games(season_id=None, player_id=None, is_draw=None):
@@ -59,12 +70,7 @@ class GameService:
         if not (game := GameModel.query.filter_by(id=game_id).first()):
             return err_resp("Game not found!", "user_404", 404)
 
-        try:
-            return BoardSchema().dump(game), 200
-
-        except Exception as error:
-            current_app.logger.error(error)
-            return internal_err_resp()
+        return BoardSchema().dump(game), 200
 
     @staticmethod
     def make_turn(game_id, turn):

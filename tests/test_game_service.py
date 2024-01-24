@@ -161,11 +161,10 @@ class TestGameService(BaseTestCase):
             resp,
             (
                 {
-                    "error_reason": "game_400",
-                    "message": "An integrity error occurred!",
-                    "status": False,
+                    "error_reason": "player_404",
+                    "message": "Player 2 not found!",
                 },
-                400,
+                404,
             ),
         )
 
@@ -182,7 +181,6 @@ class TestGameService(BaseTestCase):
             resp,
             (
                 {
-                    "status": False,
                     "message": "Game not found!",
                     "error_reason": "game_404",
                 },
@@ -208,7 +206,6 @@ class TestGameService(BaseTestCase):
             resp,
             (
                 {
-                    "status": False,
                     "message": "Game finished!",
                     "error_reason": "game_409",
                 },
@@ -244,7 +241,6 @@ class TestGameService(BaseTestCase):
             resp,
             (
                 {
-                    "status": False,
                     "message": "Player not authorized!",
                     "error_reason": "player_403",
                 },
@@ -267,7 +263,6 @@ class TestGameService(BaseTestCase):
             resp,
             (
                 {
-                    "status": False,
                     "message": "Not your turn!",
                     "error_reason": "player_403",
                 },
@@ -296,7 +291,6 @@ class TestGameService(BaseTestCase):
             resp,
             (
                 {
-                    "status": False,
                     "message": "Cell is already taken!",
                     "error_reason": "turn_409",
                 },
@@ -320,7 +314,6 @@ class TestGameService(BaseTestCase):
             resp,
             (
                 {
-                    "status": False,
                     "message": "Invalid turn!",
                     "error_reason": "turn_400",
                 },

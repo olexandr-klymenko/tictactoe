@@ -32,7 +32,7 @@ class TestGameBlueprint(BaseTestCase):
         data = json.loads(resp.data.decode())
         self.assertEqual(retrieved_game.id, data["game_id"])
 
-    def test_start_game_fail(self):
+    def test_start_game_fail_no_second_player(self):
         player_x = PlayerModel(name="Test Player 1", email="test1@example.com")
         season = SeasonModel(name="Test season")
         db.session.add_all([player_x, season])
@@ -42,6 +42,20 @@ class TestGameBlueprint(BaseTestCase):
             json={
                 "player_x_id": player_x.id,
                 "player_o_id": 999,
+            },
+        )
+        self.assertEqual(resp.status_code, 404)
+
+    def test_start_game_fail_with_the_same_player(self):
+        player_x = PlayerModel(name="Test Player 1", email="test1@example.com")
+        season = SeasonModel(name="Test season")
+        db.session.add_all([player_x, season])
+        db.session.commit()
+        resp = self.client.post(
+            "/api/games/",
+            json={
+                "player_x_id": player_x.id,
+                "player_o_id": player_x.id,
             },
         )
         self.assertEqual(resp.status_code, 400)

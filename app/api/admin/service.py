@@ -1,6 +1,5 @@
 from typing import List, Dict
 
-from flask import current_app
 from sqlalchemy import and_, case, func, or_
 
 from app import db
@@ -15,7 +14,7 @@ from app.models.schemas import (
     PlayerSchema,
     ListPlayersSchema,
 )
-from app.utils import internal_err_resp, err_resp
+from app.utils import err_resp
 
 list_player_schema = ListPlayersSchema(many=True)
 
@@ -67,16 +66,10 @@ class AdminService:
         Start new league season.
         (Sets current season id to this one's id).
         """
-        try:
-            season = SeasonModel(name=data["name"])
-            db.session.add(season)
-            db.session.commit()
-            return {"name": data["name"], "season_id": season.id}, 201
-
-        except Exception as error:
-            db.session.rollback()
-            current_app.logger.error(error)
-            return internal_err_resp()
+        season = SeasonModel(name=data["name"])
+        db.session.add(season)
+        db.session.commit()
+        return {"name": data["name"], "season_id": season.id}, 201
 
     @staticmethod
     def list_seasons() -> List[Dict]:

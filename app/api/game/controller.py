@@ -50,6 +50,7 @@ turn_data = ns.model(
 
 
 @ns.route("/<string:game_id>")
+@ns.response(404, "Game not found")
 class Game(Resource):
     @ns.doc("view_board")
     @ns.marshal_with(view_board)
@@ -57,16 +58,10 @@ class Game(Resource):
         """Get a specific game data by its id"""
         return GameService.view_board(game_id)
 
-    @ns.doc(
-        "make_turn",
-        responses={
-            200: ("Game data successfully sent", turn_data),
-            400: "Invalid turn",
-            403: "Player not in the game of not player's turn",
-            404: "Game not found",
-            409: "Game is finished or cell is taken",
-        },
-    )
+    @ns.doc("make_turn")
+    @ns.response(400, "Invalid turn")
+    @ns.response(403, "Player not in the game of not player's turn")
+    @ns.response(409, "Game is finished or cell is taken")
     @ns.expect(turn_data)
     @ns.marshal_with(turn_data)
     def put(self, game_id):
@@ -77,6 +72,8 @@ class Game(Resource):
 @ns.route("/")
 class Games(Resource):
     @ns.doc("start_game")
+    @ns.response(400, "Invalid game data")
+    @ns.response(404, "Player not found")
     @ns.expect(start_game_in)
     @ns.marshal_with(start_game_out)
     def post(self):
@@ -87,9 +84,18 @@ class Games(Resource):
     @ns.marshal_list_with(game_stat)
     def get(self):
         """List games"""
+
+        # Define query filters
         parser = reqparse.RequestParser()
-        parser.add_argument("season_id", type=int, location="args")
-        parser.add_argument("player_id", type=int, location="args")
-        parser.add_argument("is_draw", type=bool, location="args")
+        parser.add_argument(
+            "season_id", type=int, location="args"
+        )  # filter by season
+        parser.add_argument(
+            "player_id", type=int, location="args"
+        )  # filter by player
+        parser.add_argument(
+            "is_draw", type=bool, location="args"
+        )  # filter by game draw
         args = parser.parse_args()
+
         return GameService.list_games(**args)

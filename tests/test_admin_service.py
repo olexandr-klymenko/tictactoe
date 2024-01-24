@@ -149,7 +149,6 @@ class TestAdminService(BaseTestCase):
                 {
                     "error_reason": "player_404",
                     "message": "Player not found",
-                    "status": False,
                 },
                 404,
             ),
