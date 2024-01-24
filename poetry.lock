@@ -91,6 +91,17 @@ async = ["asgiref (>=3.2)"]
 dotenv = ["python-dotenv"]
 
 [[package]]
+name = "flask-cors"
+version = "4.0.0"
+description = "A Flask extension adding a decorator for CORS support"
+category = "main"
+optional = false
+python-versions = "*"
+
+[package.dependencies]
+Flask = ">=0.9"
+
+[[package]]
 name = "flask-marshmallow"
 version = "1.1.0"
 description = "Flask + marshmallow for beautiful APIs"
@@ -440,7 +451,7 @@ testing = ["pytest (>=6)", "pytest-checkdocs (>=2.4)", "pytest-cov", "pytest-ena
 [metadata]
 lock-version = "1.1"
 python-versions = "^3.8"
-content-hash = "15653a4b6331fbec0f01aae6de7d508dae6647fe571af8f8f9666bbf31d3d9c6"
+content-hash = "35a84b36683835560292ddf793d0a0e75f50c9004479484b6c3f5534ad7d22fe"
 
 [metadata.files]
 alembic = []
@@ -450,6 +461,7 @@ blinker = []
 click = []
 colorama = []
 flask = []
+flask-cors = []
 flask-marshmallow = []
 flask-migrate = []
 flask-restx = []

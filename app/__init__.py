@@ -7,6 +7,7 @@ This module:
 """
 
 from flask import Flask
+from flask_cors import CORS
 from werkzeug.middleware.proxy_fix import ProxyFix
 
 # Import config
@@ -18,6 +19,10 @@ from .extensions import db, ma
 
 def create_app(config_name):
     app = Flask(__name__)
+    CORS(
+        app
+    )  # A Flask extension for handling Cross Origin Resource Sharing (CORS),
+    # making cross-origin AJAX possible.
 
     # By applying ProxyFix to your Flask app,
     # you ensure that it correctly handles requests

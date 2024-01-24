@@ -4,6 +4,8 @@ from app import db
 
 
 class PlayerModel(db.Model):
+    """Game player model"""
+
     __tablename__ = "player"
     id = db.Column(db.Integer, primary_key=True)
     name = db.Column(db.String(50), unique=True, nullable=False)
@@ -15,6 +17,8 @@ class PlayerModel(db.Model):
 
 
 class TurnModel(db.Model):
+    """Game turn model"""
+
     __tablename__ = "turn"
     id = db.Column(db.Integer, primary_key=True)
     player_id = db.Column(
@@ -85,7 +89,7 @@ class SeasonModel(db.Model):
     def current_season_id(cls):
         """
         Assuming that primary key is integer and autoincrement.
-        Therefore, the current season is the biggest one.
+        Therefore, the current season id is the largest one.
         """
         return cls.query.order_by(cls.id.desc()).first().id
 

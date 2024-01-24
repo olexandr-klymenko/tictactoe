@@ -12,6 +12,7 @@ Flask-Migrate = "^4.0.5"
 flask-marshmallow = "^1.1.0"
 marshmallow-sqlalchemy = "^0.30.0"
 python-dotenv = "^1.0.0"
+Flask-Cors = "^4.0.0"
 
 [tool.poetry.dev-dependencies]
 

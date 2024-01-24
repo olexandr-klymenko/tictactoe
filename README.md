@@ -29,6 +29,7 @@ Note: Games stat list can be obtained for given season, player, draw result by p
 * Database Migrations using [Flask-Migrate](https://github.com/miguelgrinberg/flask-migrate)
 * Object serialization/deserialization with [Flask-Marshmallow](https://flask-marshmallow.readthedocs.io/en/latest/)
 * Data validations with Marshmallow [Marshmallow](https://marshmallow.readthedocs.io/en/stable/quickstart.html#validation)
+* A Flask extension for handling Cross Origin Resource Sharing (CORS) [Flask-CORS](https://flask-cors.readthedocs.io/en/latest/)
 
 ## Flask CLI help command output:
 ```sh
