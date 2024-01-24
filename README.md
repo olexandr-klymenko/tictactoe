@@ -1,10 +1,17 @@
-# tictactoe
+# Tic-tac-toe game api
 
 A Tic-tac-toe game
 
 # Features
+* Create/Delete/Read Player details (/api/admin/players/<id>)
+* List players table (/api/admin/players/)
+* Build ranking table (/api/admin/ranking/)
+* Start new season, list seasons (/api/admin/seasons/)
+* Start game, list games (/api/games/)
+* Get game board data, make game turn (/api/games/<game_id>)
 
-* Full-featured framework for fast, easy, and documented API with [Flask-RESTX](https://flask-restx.readthedocs.io/en/latest/)
+# Components
+* Game API is based on  [Flask-RESTX](https://flask-restx.readthedocs.io/en/latest/)
 * Swagger Documentation (Part of Flask-RESTX).
 * Unit Testing.
 * Database ORM with [Flask-SQLAlchemy](https://flask-sqlalchemy.palletsprojects.com/en/2.x/)
