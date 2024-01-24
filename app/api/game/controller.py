@@ -1,14 +1,52 @@
-from flask_restx import Resource, reqparse
+from flask_restx import Resource, reqparse, Namespace, fields
 
-from .dto import GameDto
 from .service import GameService
 
-ns = GameDto.api
-start_game_in = GameDto.start_game_in
-start_game_out = GameDto.start_game_out
-view_board = GameDto.view_board
-turn_data = GameDto.turn_data
-game_stat = GameDto.game_stat
+ns = Namespace("games", description="Game related operations.")
+view_board = ns.model(
+    "Game board object",
+    {
+        "player_x": fields.String,
+        "player_o": fields.String,
+        "current_player": fields.String,
+        "winner": fields.String,
+        "board": fields.List(fields.List(fields.String)),
+    },
+)
+
+start_game_in = ns.model(
+    "Start tic-tac-toe game request",
+    {
+        "player_x_id": fields.Integer,
+        "player_o_id": fields.Integer,
+    },
+)
+
+start_game_out = ns.model(
+    "Start tic-tac-toe game response",
+    {"game_id": fields.Integer},
+)
+
+game_stat = ns.model(
+    "Game statistic response",
+    {
+        "season_id": fields.Integer,
+        "game_id": fields.Integer,
+        "player_x": fields.String,
+        "player_o": fields.String,
+        "winner": fields.String,
+        "turns": fields.Integer,
+    },
+)
+
+turn_data = ns.model(
+    "Turn object",
+    {
+        "player_id": fields.Integer,
+        "row": fields.Integer,
+        "col": fields.Integer,
+    },
+)
 
 
 @ns.route("/<string:game_id>")

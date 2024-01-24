@@ -1,15 +1,58 @@
 from flask_restx import Resource
+from flask_restx import Namespace, fields
 
 from app.models.schemas import ListPlayersSchema
-from .dto import AdminDto
 from .service import AdminService
 
-ns = AdminDto.api
-start_season_in = AdminDto.start_season_in
-start_season_out = AdminDto.start_season_out
-create_player_in = AdminDto.create_player_in
-player_out = AdminDto.player_out
-player = AdminDto.player
+
+ns = Namespace("admin", description="Management related operations.")
+start_season_in = ns.model(
+    "Start new league season request",
+    {
+        "name": fields.String,
+    },
+    strict=True,
+)
+
+start_season_out = ns.model(
+    "Start new league season response",
+    {
+        "name": fields.String,
+        "season_id": fields.Integer,
+    },
+)
+create_player_in = ns.model(
+    "Create player request",
+    {
+        "name": fields.String(required=True),
+        "email": fields.String(required=True),
+        "age": fields.Integer,
+        "country": fields.String,
+    },
+    strict=True,
+)
+
+player_out = ns.model(
+    "Player response",
+    {
+        "id": fields.Integer,
+        "name": fields.String,
+        "email": fields.String,
+        "age": fields.Integer,
+        "country": fields.String,
+    },
+)
+
+player = ns.model(
+    "Player details",
+    {
+        "id": fields.Integer,
+        "name": fields.String,
+        "email": fields.String,
+        "age": fields.Integer,
+        "country": fields.String,
+    },
+)
 
 
 @ns.route("/seasons/")
