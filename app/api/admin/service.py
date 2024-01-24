@@ -7,7 +7,7 @@ from app.models import (
     GameModel,
     PlayerModel,
     SeasonModel,
-    GameTurnModel,
+    TurnModel,
 )
 from app.schemas import (
     RankingRecordSchema,
@@ -42,8 +42,8 @@ class AdminService:
         player = PlayerModel.query.filter(PlayerModel.id == player_id).first()
         if not player:
             return err_resp("Player not found", "player_404", 404)
-        player_turns = GameTurnModel.query.filter(
-            GameTurnModel.player_id == player_id
+        player_turns = TurnModel.query.filter(
+            TurnModel.player_id == player_id
         ).all()
         if player_turns:
             return err_resp(

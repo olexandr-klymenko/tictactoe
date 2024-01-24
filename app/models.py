@@ -11,10 +11,10 @@ class PlayerModel(db.Model):
     age = db.Column(db.Integer, nullable=True)
     country = db.Column(db.String(50), nullable=True)
 
-    turns = db.relationship("GameTurnModel", backref="player", lazy=True)
+    turns = db.relationship("TurnModel", backref="player", lazy=True)
 
 
-class GameTurnModel(db.Model):
+class TurnModel(db.Model):
     __tablename__ = "turn"
     id = db.Column(db.Integer, primary_key=True)
     player_id = db.Column(
@@ -45,7 +45,7 @@ class GameModel(db.Model):
     current_player = db.relationship(
         "PlayerModel", foreign_keys=[current_player_id]
     )
-    turns = db.relationship("GameTurnModel", backref="game", lazy=True)
+    turns = db.relationship("TurnModel", backref="game", lazy=True)
 
     @property
     def players(self):
@@ -90,8 +90,8 @@ class SeasonModel(db.Model):
     @classmethod
     def current_season_id(cls):
         """
-        Assuming that primary key is integer.
-        Therefore, the current season is the last added one.
+        Assuming that primary key is integer and autoincrement.
+        Therefore, the current season is the biggest one.
         """
         return cls.query.order_by(cls.id.desc()).first().id
 

@@ -2,7 +2,7 @@ from app import db
 from app.api.game.service import GameService
 from app.models import (
     GameModel,
-    GameTurnModel,
+    TurnModel,
     PlayerModel,
     SeasonModel,
 )
@@ -105,24 +105,12 @@ class TestGameService(BaseTestCase):
         player_x, player_o, season, game = self.create_players_season_game()
 
         turns = [
-            GameTurnModel(
-                player_id=player_x.id, row=0, col=0, game_id=game.id
-            ),
-            GameTurnModel(
-                player_id=player_o.id, row=1, col=1, game_id=game.id
-            ),
-            GameTurnModel(
-                player_id=player_x.id, row=0, col=1, game_id=game.id
-            ),
-            GameTurnModel(
-                player_id=player_o.id, row=0, col=2, game_id=game.id
-            ),
-            GameTurnModel(
-                player_id=player_x.id, row=1, col=0, game_id=game.id
-            ),
-            GameTurnModel(
-                player_id=player_o.id, row=2, col=0, game_id=game.id
-            ),
+            TurnModel(player_id=player_x.id, row=0, col=0, game_id=game.id),
+            TurnModel(player_id=player_o.id, row=1, col=1, game_id=game.id),
+            TurnModel(player_id=player_x.id, row=0, col=1, game_id=game.id),
+            TurnModel(player_id=player_o.id, row=0, col=2, game_id=game.id),
+            TurnModel(player_id=player_x.id, row=1, col=0, game_id=game.id),
+            TurnModel(player_id=player_o.id, row=2, col=0, game_id=game.id),
         ]
         db.session.add_all(turns)
         db.session.commit()
@@ -274,7 +262,7 @@ class TestGameService(BaseTestCase):
         player_x, player_o, season, game = self.create_players_season_game()
 
         db.session.add(
-            GameTurnModel(player_id=player_x.id, row=0, col=0, game_id=game.id)
+            TurnModel(player_id=player_x.id, row=0, col=0, game_id=game.id)
         )
         db.session.commit()
 
@@ -352,18 +340,10 @@ class TestGameService(BaseTestCase):
     def test_player_turn_to_win_row(self):
         player_x, player_o, season, game = self.create_players_season_game()
         turns = [
-            GameTurnModel(
-                player_id=player_x.id, row=0, col=0, game_id=game.id
-            ),
-            GameTurnModel(
-                player_id=player_o.id, row=1, col=0, game_id=game.id
-            ),
-            GameTurnModel(
-                player_id=player_x.id, row=0, col=1, game_id=game.id
-            ),
-            GameTurnModel(
-                player_id=player_o.id, row=1, col=1, game_id=game.id
-            ),
+            TurnModel(player_id=player_x.id, row=0, col=0, game_id=game.id),
+            TurnModel(player_id=player_o.id, row=1, col=0, game_id=game.id),
+            TurnModel(player_id=player_x.id, row=0, col=1, game_id=game.id),
+            TurnModel(player_id=player_o.id, row=1, col=1, game_id=game.id),
         ]
         db.session.add_all(turns)
         db.session.commit()
@@ -390,18 +370,10 @@ class TestGameService(BaseTestCase):
     def test_player_turn_to_win_col(self):
         player_x, player_o, season, game = self.create_players_season_game()
         turns = [
-            GameTurnModel(
-                player_id=player_x.id, row=0, col=0, game_id=game.id
-            ),
-            GameTurnModel(
-                player_id=player_o.id, row=0, col=1, game_id=game.id
-            ),
-            GameTurnModel(
-                player_id=player_x.id, row=1, col=0, game_id=game.id
-            ),
-            GameTurnModel(
-                player_id=player_o.id, row=1, col=1, game_id=game.id
-            ),
+            TurnModel(player_id=player_x.id, row=0, col=0, game_id=game.id),
+            TurnModel(player_id=player_o.id, row=0, col=1, game_id=game.id),
+            TurnModel(player_id=player_x.id, row=1, col=0, game_id=game.id),
+            TurnModel(player_id=player_o.id, row=1, col=1, game_id=game.id),
         ]
         db.session.add_all(turns)
         db.session.commit()
@@ -428,18 +400,10 @@ class TestGameService(BaseTestCase):
     def test_player_turn_to_win_diagonal(self):
         player_x, player_o, season, game = self.create_players_season_game()
         turns = [
-            GameTurnModel(
-                player_id=player_x.id, row=0, col=0, game_id=game.id
-            ),
-            GameTurnModel(
-                player_id=player_o.id, row=0, col=2, game_id=game.id
-            ),
-            GameTurnModel(
-                player_id=player_x.id, row=1, col=1, game_id=game.id
-            ),
-            GameTurnModel(
-                player_id=player_o.id, row=2, col=0, game_id=game.id
-            ),
+            TurnModel(player_id=player_x.id, row=0, col=0, game_id=game.id),
+            TurnModel(player_id=player_o.id, row=0, col=2, game_id=game.id),
+            TurnModel(player_id=player_x.id, row=1, col=1, game_id=game.id),
+            TurnModel(player_id=player_o.id, row=2, col=0, game_id=game.id),
         ]
         db.session.add_all(turns)
         db.session.commit()

@@ -90,6 +90,10 @@ FLASK_CONFIG=development
 ```
 
 ```sh
+$ cp .env_eample .env
+````
+
+```sh
 # Enter the virtualenv
 $ poetry shell
 

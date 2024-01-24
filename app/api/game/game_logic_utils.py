@@ -27,25 +27,26 @@ def is_winner(game_turns, turn):
     if len(player_turns) < 3:  # Not enough turns to win the game
         return False
 
-    row = turn["row"]
-    col = turn["col"]
+    current_turn_row = turn["row"]
+    current_turn_col = turn["col"]
 
     # check vertical line
-    if len([t for t in player_turns if t["row"] == row]) == GAME_BOARD_SIZE:
+    if (
+        len([t for t in player_turns if t["row"] == current_turn_row])
+        == GAME_BOARD_SIZE
+    ):
         return True
 
     # check horizontal line
-    if len([t for t in player_turns if t["col"] == col]) == GAME_BOARD_SIZE:
+    if (
+        len([t for t in player_turns if t["col"] == current_turn_col])
+        == GAME_BOARD_SIZE
+    ):
         return True
 
     # check diagonal lines
-    if row + col % 2 == 1:  # turn cell not in any of the corners
-        return False
-
-    if {
-        "row": 1,
-        "col": 1,
-    } in player_turns:  # diagonal should contain central cell
+    # the sum of all coordinates should be equal to 6
+    if sum([t["row"] + t["col"] for t in player_turns]) == 6:
         return True
 
     return False

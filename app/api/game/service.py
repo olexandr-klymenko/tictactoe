@@ -3,7 +3,7 @@ from sqlalchemy import or_, not_
 from app import db
 from app.models import (
     GameModel,
-    GameTurnModel,
+    TurnModel,
     SeasonModel,
     PlayerModel,
 )
@@ -100,7 +100,7 @@ class GameService:
             return err_resp("Invalid turn!", "turn_400", 400)
 
         db.session.add(
-            GameTurnModel(
+            TurnModel(
                 player_id=player_id,
                 row=turn["row"],
                 col=turn["col"],
