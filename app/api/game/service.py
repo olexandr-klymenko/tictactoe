@@ -10,7 +10,7 @@ from app.models.models import (
 from app.models.schemas import BoardSchema, GameStartSchema, GameSchema
 from app.utils import err_resp
 
-from .game_utils import is_cell_already_taken, is_valid_turn, is_winner
+from .game_logic_utils import is_cell_already_taken, is_valid_turn, is_winner
 
 
 class GameService:

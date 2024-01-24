@@ -34,6 +34,7 @@ def register_extensions(app):
     db.init_app(app)
     ma.init_app(app)
 
+    # Enforce foreign_keys checking which is turned off by default
     if "sqlite" in app.config["SQLALCHEMY_DATABASE_URI"]:
 
         def _fk_pragma_on_connect(dbapi_con, con_record):  # noqa
