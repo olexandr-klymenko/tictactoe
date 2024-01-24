@@ -65,12 +65,6 @@ Please specify your app's environment variables in a `.env` file, otherwise Flas
 
 ```sh
 # .env file example
-export FLASK_APP=tictactoe
-
-# configs: production, testing, development, and default (uses DevelopmentConfig)
-export FLASK_CONFIG=development
-
-# Another way of assigning environment variables is:
 FLASK_APP=tictactoe
 FLASK_CONFIG=development
 
@@ -81,8 +75,9 @@ FLASK_CONFIG=development
 # Enter the virtualenv
 $ poetry shell
 
-$ flask db init # Creates a new migration repository
-$ flask db upgrade # Upgrade to a later version
+$ flask db init # Creates a new migration repository.
+$ flask db migrate #  Create a new revision file.
+$ flask db upgrade # Upgrade to a later version.
 
 # Run the app
 $ flask run
