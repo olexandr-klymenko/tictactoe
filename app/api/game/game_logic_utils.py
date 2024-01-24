@@ -1,6 +1,6 @@
 from typing import Iterable
 
-from app.models import TurnModel
+from app.models import TurnModel, GameModel
 
 GAME_BOARD_SIZE = 3
 
@@ -64,3 +64,14 @@ def is_valid_turn(turn):
     ):
         return False
     return True
+
+
+def is_finished(game: "GameModel"):
+    """
+    The game considered to be finished if there is a winner
+    or all cells are taken
+    """
+    return (
+        game.winner_id is not None
+        or len(game.turns) == GAME_BOARD_SIZE * GAME_BOARD_SIZE
+    )

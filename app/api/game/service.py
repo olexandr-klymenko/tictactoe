@@ -7,10 +7,15 @@ from app.models import (
     SeasonModel,
     PlayerModel,
 )
-from app.schemas import BoardSchema, GameStartSchema, GameSchema
+from app.schemas import GameBoardSchema, GameStartSchema, GameStatsSchema
 from app.utils import err_resp
 
-from .game_logic_utils import is_cell_already_taken, is_valid_turn, is_winner
+from .game_logic_utils import (
+    is_cell_already_taken,
+    is_valid_turn,
+    is_winner,
+    is_finished,
+)
 
 
 class GameService:
@@ -62,7 +67,7 @@ class GameService:
             games_query = games_query.filter(
                 not_(GameModel.winner_id.is_(None))
             )
-        return GameSchema(many=True).dump(games_query.all()), 200
+        return GameStatsSchema(many=True).dump(games_query.all()), 200
 
     @staticmethod
     def view_board(game_id):
@@ -70,7 +75,7 @@ class GameService:
         if not (game := GameModel.query.filter_by(id=game_id).first()):
             return err_resp("Game not found!", "user_404", 404)
 
-        return BoardSchema().dump(game), 200
+        return GameBoardSchema().dump(game), 200
 
     @staticmethod
     def make_turn(game_id, turn):
@@ -78,7 +83,7 @@ class GameService:
         if not (game := GameModel.query.filter_by(id=game_id).first()):
             return err_resp("Game not found!", "game_404", 404)
 
-        if game.is_finished:  # Turn can't be made in the finished game
+        if is_finished(game):  # Turn can't be made in the finished game
             return err_resp("Game finished!", "game_409", 409)
 
         if (

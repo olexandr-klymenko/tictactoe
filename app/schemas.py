@@ -11,7 +11,9 @@ class GameStartSchema(ma.Schema):
     game_id = fields.Function(lambda obj: obj.id)
 
 
-class GameSchema(ma.Schema):
+class GameStatsSchema(ma.Schema):
+    """Schema to build game stats line"""
+
     class Meta:
         fields = (
             "season_id",
@@ -32,8 +34,8 @@ class GameSchema(ma.Schema):
     turns = fields.Function(lambda obj: len(obj.turns))
 
 
-class BoardSchema(ma.Schema):
-    """The schema for game model into readable board details"""
+class GameBoardSchema(ma.Schema):
+    """Schema for game model into readable board details"""
 
     class Meta:
         fields = ("player_x", "player_o", "current_player", "winner", "board")
@@ -70,6 +72,8 @@ class BoardSchema(ma.Schema):
 
 
 class RankingRecordSchema(ma.Schema):
+    """Schema for building ranking table line"""
+
     class Meta:
         fields = ("rank", "player_id", "player_name", "total_points")
 
@@ -80,6 +84,8 @@ class RankingRecordSchema(ma.Schema):
 
 
 class PlayerSchema(ma.SQLAlchemySchema):
+    """Player details schema"""
+
     class Meta:
         model = PlayerModel
 
@@ -91,6 +97,8 @@ class PlayerSchema(ma.SQLAlchemySchema):
 
 
 class ListPlayersSchema(ma.Schema):
+    """Schema to form list of players with hyperlink to player details"""
+
     class Meta:
         fields = ("name", "links")
 

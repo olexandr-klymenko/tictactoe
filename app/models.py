@@ -26,6 +26,8 @@ class TurnModel(db.Model):
 
 
 class GameModel(db.Model):
+    """Game model"""
+
     __tablename__ = "game"
     id = db.Column(Integer, primary_key=True)
     player_x_id = db.Column(Integer, ForeignKey("player.id"), nullable=False)
@@ -51,16 +53,6 @@ class GameModel(db.Model):
     def players(self):
         return self.player_x_id, self.player_o_id
 
-    @property
-    def is_finished(self):
-        """
-        The game considered to be finished if there is a winner
-        or all cells are taken
-        """
-        return (
-            self.winner_id is not None or len(self.turns) == 9
-        )  # 3 * 3, where 3 is board size
-
     def switch_current_player(self):
         """Switch current player after making turn"""
         if self.current_player_id == self.player_x_id:
@@ -71,7 +63,7 @@ class GameModel(db.Model):
         db.session.commit()
 
     def __init__(self, player_x_id, player_o_id, season_id):
-        """Takes ids of the first and the second players and season id"""
+        """Takes ids of the first and the second players and the season_id"""
         self.player_x_id = player_x_id
         self.player_o_id = player_o_id
         self.season_id = season_id  # current season id
@@ -81,6 +73,8 @@ class GameModel(db.Model):
 
 
 class SeasonModel(db.Model):
+    """League season model"""
+
     __tablename__ = "season"
     id = db.Column(Integer, primary_key=True)
     name = db.Column(db.String(100), unique=True, nullable=False)
