@@ -110,7 +110,7 @@ class GameService:
         game.switch_current_player()
 
         if is_winner(
-            game_turns=game.turns, turn=turn
+            game_turns=game.turns, latest_turn=turn
         ):  # Check if the turn wins the game
             game.winner_id = player_id
 

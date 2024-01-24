@@ -149,7 +149,9 @@ class AdminService:
                 ),
             )
             .group_by(PlayerModel.id, PlayerModel.name)
-            .order_by(total_points_expr.desc())
+            .order_by(
+                total_points_expr.desc()
+            )  # ranking table in descending order
         )
 
         ranking_results = ranking_query.all()
