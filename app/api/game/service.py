@@ -1,3 +1,4 @@
+from flask import abort
 from sqlalchemy import or_, not_
 
 from app import db
@@ -8,7 +9,6 @@ from app.models import (
     PlayerModel,
 )
 from app.schemas import GameBoardSchema, GameStartSchema, GameStatsSchema
-from app.utils import err_resp
 
 from .game_logic_utils import (
     is_cell_already_taken,
@@ -22,23 +22,21 @@ class GameService:
     @staticmethod
     def start_game(data):
         if data["player_x_id"] == data["player_o_id"]:
-            return err_resp(
-                "Can't start game with one player", "game_400", 400
-            )
+            abort(400, "For game 2 players needed")
 
         # Make sure player 1 is in the database
         player_x = PlayerModel.query.filter(
             PlayerModel.id == data["player_x_id"]
         ).first()
         if not player_x:
-            return err_resp("Player 1 not found!", "player_404", 404)
+            abort(404, "Player 1 not found!")
 
         # Make sure player 2 is in the database
         player_o = PlayerModel.query.filter(
             PlayerModel.id == data["player_o_id"]
         ).first()
         if not player_o:
-            return err_resp("Player 2 not found!", "player_404", 404)
+            abort(404, "Player 2 not found!")
 
         game = GameModel(
             player_x_id=data["player_x_id"],
@@ -73,7 +71,7 @@ class GameService:
     def view_board(game_id):
         """Get game board data by game_id"""
         if not (game := GameModel.query.filter_by(id=game_id).first()):
-            return err_resp("Game not found!", "user_404", 404)
+            abort(404, "Game not found!")
 
         return GameBoardSchema().dump(game), 200
 
@@ -81,28 +79,28 @@ class GameService:
     def make_turn(game_id, turn):
         player_id = turn["player_id"]
         if not (game := GameModel.query.filter_by(id=game_id).first()):
-            return err_resp("Game not found!", "game_404", 404)
+            abort(404, "Game not found!")
 
         if is_finished(game):  # Turn can't be made in the finished game
-            return err_resp("Game finished!", "game_409", 409)
+            abort(409, "Game is already finished!")
 
         if (
             player_id not in game.players
         ):  # Player doesn't participate in the game
-            return err_resp("Player not authorized!", "player_403", 403)
+            abort(401, "Player not authorized!")
 
         if (
             player_id != game.current_player_id
         ):  # This is not turn of the player
-            return err_resp("Not your turn!", "player_403", 403)
+            abort(403, "Not your turn!")
 
         if is_cell_already_taken(
             turn, game.turns
         ):  # This cell was taken by one of the previous turns
-            return err_resp("Cell is already taken!", "turn_409", 409)
+            abort(409, "Cell is already taken!")
 
         if not is_valid_turn(turn):
-            return err_resp("Invalid turn!", "turn_400", 400)
+            abort(400, "Invalid turn!")
 
         db.session.add(
             TurnModel(

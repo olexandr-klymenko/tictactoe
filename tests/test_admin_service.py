@@ -1,3 +1,5 @@
+import werkzeug
+
 from app import db
 from app.api.admin.service import AdminService
 from app.api.game.service import GameService
@@ -142,17 +144,8 @@ class TestAdminService(BaseTestCase):
         )
 
     def test_get_player_not_found(self):
-        resp = AdminService.get_player(999)
-        self.assertEqual(
-            resp,
-            (
-                {
-                    "error_reason": "player_404",
-                    "message": "Player not found",
-                },
-                404,
-            ),
-        )
+        with self.assertRaises(werkzeug.exceptions.NotFound):
+            AdminService.get_player(999)
 
     def test_delete_player(self):
         player = PlayerModel(
@@ -169,3 +162,8 @@ class TestAdminService(BaseTestCase):
                 204,
             ),
         )
+
+    def test_delete_player_fail(self):
+        player, _, __, ___ = self.create_players_season_game()
+        with self.assertRaises(werkzeug.exceptions.Conflict):
+            AdminService.delete_player(player.id)

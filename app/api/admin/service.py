@@ -1,5 +1,6 @@
 from typing import List, Dict
 
+from flask import abort
 from sqlalchemy import and_, case, func, or_
 
 from app import db
@@ -7,14 +8,12 @@ from app.models import (
     GameModel,
     PlayerModel,
     SeasonModel,
-    TurnModel,
 )
 from app.schemas import (
     RankingRecordSchema,
     PlayerSchema,
     ListPlayersSchema,
 )
-from app.utils import err_resp
 
 list_player_schema = ListPlayersSchema(many=True)
 
@@ -33,7 +32,7 @@ class AdminService:
         """Get player by player_id"""
         player = PlayerModel.query.filter(PlayerModel.id == player_id).first()
         if not player:
-            return err_resp("Player not found", "player_404", 404)
+            abort(404, "Player not found")
         return PlayerSchema().dump(player), 200
 
     @staticmethod
@@ -41,16 +40,17 @@ class AdminService:
         """Delete player by player_id"""
         player = PlayerModel.query.filter(PlayerModel.id == player_id).first()
         if not player:
-            return err_resp("Player not found", "player_404", 404)
-        player_turns = TurnModel.query.filter(
-            TurnModel.player_id == player_id
-        ).all()
-        if player_turns:
-            return err_resp(
-                "There are games that player participated in",
-                "player_409",
-                409,
+            abort(404, "Player not found")
+
+        player_games = GameModel.query.filter(
+            or_(
+                GameModel.player_x_id == player_id,
+                GameModel.player_o_id == player_id,
             )
+        ).all()
+        if player_games:
+            abort(409, "There are games that player participated in")
+
         db.session.delete(player)
         db.session.commit()
         return None, 204

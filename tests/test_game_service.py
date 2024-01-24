@@ -1,3 +1,5 @@
+import werkzeug
+
 from app import db
 from app.api.game.service import GameService
 from app.models import (
@@ -139,42 +141,38 @@ class TestGameService(BaseTestCase):
         db.session.add_all([player_x, season])
         db.session.commit()
 
-        resp = GameService.start_game(
-            data={
-                "player_x_id": player_x.id,
-                "player_o_id": 999,
-            }
-        )
-        self.assertEquals(
-            resp,
-            (
-                {
-                    "error_reason": "player_404",
-                    "message": "Player 2 not found!",
-                },
-                404,
-            ),
-        )
+        with self.assertRaises(werkzeug.exceptions.NotFound):
+            GameService.start_game(
+                data={
+                    "player_x_id": player_x.id,
+                    "player_o_id": 999,
+                }
+            )
+
+    def test_start_game_fail_two_same_players(self):
+        player_x = PlayerModel(name="Test Player 1", email="test1@example.com")
+        season = SeasonModel(name="Test season")
+        db.session.add_all([player_x, season])
+        db.session.commit()
+
+        with self.assertRaises(werkzeug.exceptions.BadRequest):
+            GameService.start_game(
+                data={
+                    "player_x_id": player_x.id,
+                    "player_o_id": player_x.id,
+                }
+            )
 
     def test_make_turn_game_not_found(self):
-        resp = GameService.make_turn(
-            game_id=999,
-            turn={
-                "player_id": 1,
-                "row": 0,
-                "col": 0,
-            },
-        )
-        self.assertEquals(
-            resp,
-            (
-                {
-                    "message": "Game not found!",
-                    "error_reason": "game_404",
+        with self.assertRaises(werkzeug.exceptions.NotFound):
+            GameService.make_turn(
+                game_id=999,
+                turn={
+                    "player_id": 1,
+                    "row": 0,
+                    "col": 0,
                 },
-                404,
-            ),
-        )
+            )
 
     def test_make_turn_game_finished(self):
         player_x, player_o, season, game = self.create_players_season_game()
@@ -182,24 +180,15 @@ class TestGameService(BaseTestCase):
         db.session.add(game)
         db.session.commit()
 
-        resp = GameService().make_turn(
-            game_id=game.id,
-            turn={
-                "player_id": player_x.id,
-                "row": 0,
-                "col": 0,
-            },
-        )
-        self.assertEquals(
-            resp,
-            (
-                {
-                    "message": "Game finished!",
-                    "error_reason": "game_409",
+        with self.assertRaises(werkzeug.exceptions.Conflict):
+            GameService().make_turn(
+                game_id=game.id,
+                turn={
+                    "player_id": player_x.id,
+                    "row": 0,
+                    "col": 0,
                 },
-                409,
-            ),
-        )
+            )
 
     def test_make_turn_not_authorized(self):
         player_x = PlayerModel(name="Test Player 1", email="test1@example.com")
@@ -217,46 +206,27 @@ class TestGameService(BaseTestCase):
         db.session.add(game)
         db.session.commit()
 
-        resp = GameService().make_turn(
-            game_id=game.id,
-            turn={
-                "player_id": player_i.id,
-                "row": 0,
-                "col": 0,
-            },
-        )
-        self.assertEquals(
-            resp,
-            (
-                {
-                    "message": "Player not authorized!",
-                    "error_reason": "player_403",
+        with self.assertRaises(werkzeug.exceptions.Unauthorized):
+            GameService().make_turn(
+                game_id=game.id,
+                turn={
+                    "player_id": player_i.id,
+                    "row": 0,
+                    "col": 0,
                 },
-                403,
-            ),
-        )
+            )
 
     def test_make_turn_not_current_player(self):
         player_x, player_o, season, game = self.create_players_season_game()
-
-        resp = GameService().make_turn(
-            game_id=game.id,
-            turn={
-                "player_id": player_o.id,
-                "row": 0,
-                "col": 0,
-            },
-        )
-        self.assertEquals(
-            resp,
-            (
-                {
-                    "message": "Not your turn!",
-                    "error_reason": "player_403",
+        with self.assertRaises(werkzeug.exceptions.Forbidden):
+            GameService().make_turn(
+                game_id=game.id,
+                turn={
+                    "player_id": player_o.id,
+                    "row": 0,
+                    "col": 0,
                 },
-                403,
-            ),
-        )
+            )
 
     def test_cell_already_taken_by_player(self):
         player_x, player_o, season, game = self.create_players_season_game()
@@ -266,48 +236,28 @@ class TestGameService(BaseTestCase):
         )
         db.session.commit()
 
-        resp = GameService().make_turn(
-            game_id=game.id,
-            turn={
-                "player_id": player_x.id,
-                "row": 0,
-                "col": 0,
-            },
-        )
-
-        self.assertEquals(
-            resp,
-            (
-                {
-                    "message": "Cell is already taken!",
-                    "error_reason": "turn_409",
+        with self.assertRaises(werkzeug.exceptions.Conflict):
+            GameService().make_turn(
+                game_id=game.id,
+                turn={
+                    "player_id": player_x.id,
+                    "row": 0,
+                    "col": 0,
                 },
-                409,
-            ),
-        )
+            )
 
     def test_invalid_turn(self):
         player_x, player_o, season, game = self.create_players_season_game()
 
-        resp = GameService().make_turn(
-            game_id=game.id,
-            turn={
-                "player_id": player_x.id,
-                "row": 3,
-                "col": 0,
-            },
-        )
-
-        self.assertEquals(
-            resp,
-            (
-                {
-                    "message": "Invalid turn!",
-                    "error_reason": "turn_400",
+        with self.assertRaises(werkzeug.exceptions.BadRequest):
+            GameService().make_turn(
+                game_id=game.id,
+                turn={
+                    "player_id": player_x.id,
+                    "row": 3,
+                    "col": 0,
                 },
-                400,
-            ),
-        )
+            )
 
     def test_player_turn(self):
         player_x, player_o, season, game = self.create_players_season_game()

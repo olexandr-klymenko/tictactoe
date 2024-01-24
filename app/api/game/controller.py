@@ -60,7 +60,9 @@ class Game(Resource):
 
     @ns.doc("make_turn")
     @ns.response(400, "Invalid turn")
-    @ns.response(403, "Player not in the game of not player's turn")
+    @ns.response(401, "Player not in the game")
+    @ns.response(403, "Not player's turn")
+    @ns.response(404, "Game not found")
     @ns.response(409, "Game is finished or cell is taken")
     @ns.expect(turn_data)
     @ns.marshal_with(turn_data)
