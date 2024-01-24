@@ -1,6 +1,6 @@
 from app import db
 from app.api.game.service import GameService
-from app.models.models import (
+from app.models import (
     GameModel,
     GameTurnModel,
     PlayerModel,

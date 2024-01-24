@@ -5,10 +5,21 @@ A Tic-tac-toe game
 # Features
 * Create/Delete/Read Player details (/api/admin/players/<id>)
 * List players table (/api/admin/players/)
-* Build ranking table (/api/admin/ranking/)
+* Build ranking table for current season (/api/admin/ranking/)
 * Start new season, list seasons (/api/admin/seasons/)
-* Start game, list games (/api/games/)
+* Start game, list games statistics (/api/games/)
 * Get game board data, make game turn (/api/games/<game_id>)
+
+Note: Ranking table can be built by any season by passing `season_id` as query argument:
+```sh
+/api/admin/ranking/?season_id=XXX
+```
+Note: Games stat list can be obtained for given season, player, draw result by passing corresponding query arguments:
+```sh
+/api/games/?season_id=XXX
+/api/games/?player_id=XXX
+/api/games/?is_draw=true
+```
 
 # Components
 * Game API is based on  [Flask-RESTX](https://flask-restx.readthedocs.io/en/latest/)

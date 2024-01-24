@@ -1,5 +1,5 @@
 from app import db
-from app.models.models import GameModel, GameTurnModel
+from app.models import GameModel, GameTurnModel
 from tests.utils.base import BaseTestCase
 
 

@@ -1,7 +1,7 @@
-from flask_restx import Resource
+from flask_restx import Resource, reqparse
 from flask_restx import Namespace, fields
 
-from app.models.schemas import ListPlayersSchema
+from app.schemas import ListPlayersSchema
 from .service import AdminService
 
 
@@ -77,7 +77,18 @@ class RankingTable(Resource):
 
     @ns.doc("ranking_table")
     def get(self):
-        return AdminService.ranking_table()
+        """
+        Build ranking table for given season.
+        By default, build for current season.
+        season_id should be passed as query argument:
+        /api/admin/ranking?season_id=XXX
+        """
+        # Define query arguments
+        parser = reqparse.RequestParser()
+        parser.add_argument("season_id", type=int, location="args")
+        args = parser.parse_args()
+
+        return AdminService.ranking_table(**args)
 
 
 @ns.route("/players/")

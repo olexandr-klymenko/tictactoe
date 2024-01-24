@@ -1,13 +1,13 @@
 from sqlalchemy import or_, not_
 
 from app import db
-from app.models.models import (
+from app.models import (
     GameModel,
     GameTurnModel,
     SeasonModel,
     PlayerModel,
 )
-from app.models.schemas import BoardSchema, GameStartSchema, GameSchema
+from app.schemas import BoardSchema, GameStartSchema, GameSchema
 from app.utils import err_resp
 
 from .game_logic_utils import is_cell_already_taken, is_valid_turn, is_winner

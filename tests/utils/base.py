@@ -1,7 +1,7 @@
 import unittest
 
 from app import create_app, db
-from app.models.models import GameModel, PlayerModel, SeasonModel
+from app.models import GameModel, PlayerModel, SeasonModel
 
 
 class BaseTestCase(unittest.TestCase):

@@ -1,7 +1,7 @@
 import json
 
 from app import db
-from app.models.models import (
+from app.models import (
     GameModel,
     GameTurnModel,
     PlayerModel,

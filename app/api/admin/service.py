@@ -3,13 +3,13 @@ from typing import List, Dict
 from sqlalchemy import and_, case, func, or_
 
 from app import db
-from app.models.models import (
+from app.models import (
     GameModel,
     PlayerModel,
     SeasonModel,
     GameTurnModel,
 )
-from app.models.schemas import (
+from app.schemas import (
     RankingRecordSchema,
     PlayerSchema,
     ListPlayersSchema,

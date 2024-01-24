@@ -1,7 +1,7 @@
 import json
 
 from app import db
-from app.models.models import SeasonModel, PlayerModel
+from app.models import SeasonModel, PlayerModel
 from tests.utils.base import BaseTestCase
 
 

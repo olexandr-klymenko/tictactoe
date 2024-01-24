@@ -1,7 +1,7 @@
 from app import db
 from app.api.admin.service import AdminService
 from app.api.game.service import GameService
-from app.models.models import GameModel, PlayerModel
+from app.models import GameModel, PlayerModel
 from tests.utils.base import BaseTestCase
 
 

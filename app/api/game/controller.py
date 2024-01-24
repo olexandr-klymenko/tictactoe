@@ -85,7 +85,7 @@ class Games(Resource):
     def get(self):
         """List games"""
 
-        # Define query filters
+        # Define query arguments
         parser = reqparse.RequestParser()
         parser.add_argument(
             "season_id", type=int, location="args"
