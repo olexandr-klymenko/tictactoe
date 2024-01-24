@@ -1,5 +1,6 @@
 from typing import List, Dict
 
+import sqlalchemy.exc
 from flask import abort
 from sqlalchemy import and_, case, func, or_
 
@@ -13,6 +14,7 @@ from app.schemas import (
     RankingRecordSchema,
     PlayerSchema,
     ListPlayersSchema,
+    SeasonSchema,
 )
 
 list_player_schema = ListPlayersSchema(many=True)
@@ -22,10 +24,13 @@ class AdminService:
     @staticmethod
     def create_player(data):
         """Create player"""
-        player = PlayerModel(**data)
-        db.session.add(player)
-        db.session.commit()
-        return PlayerSchema().dump(player), 201
+        try:
+            player = PlayerModel(**data)
+            db.session.add(player)
+            db.session.commit()
+            return PlayerSchema().dump(player), 201
+        except sqlalchemy.exc.IntegrityError as err:
+            abort(400, str(err))
 
     @staticmethod
     def get_player(player_id):
@@ -66,10 +71,13 @@ class AdminService:
         Start new league season.
         (Sets current season id to this one's id).
         """
-        season = SeasonModel(name=data["name"])
-        db.session.add(season)
-        db.session.commit()
-        return {"name": data["name"], "season_id": season.id}, 201
+        try:
+            season = SeasonModel(name=data["name"])
+            db.session.add(season)
+            db.session.commit()
+            return {"name": data["name"], "season_id": season.id}, 201
+        except sqlalchemy.exc.IntegrityError as err:
+            abort(400, str(err))
 
     @staticmethod
     def list_seasons() -> List[Dict]:
@@ -81,10 +89,7 @@ class AdminService:
             .order_by(SeasonModel.id.desc())
             .all()
         )
-        return [
-            {"season_id": season_id, "name": season_name}
-            for season_id, season_name in seasons_query
-        ]
+        return SeasonSchema(many=True).dump(seasons_query)
 
     @staticmethod
     def ranking_table(season_id: int = None):

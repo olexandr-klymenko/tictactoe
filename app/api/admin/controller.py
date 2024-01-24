@@ -58,6 +58,7 @@ player = ns.model(
 @ns.route("/seasons/")
 class Seasons(Resource):
     @ns.doc("start_season")
+    @ns.response(400, "Invalid season data!")
     @ns.expect(start_season_in)
     @ns.marshal_with(start_season_out, code=201)
     def post(self):
@@ -94,6 +95,7 @@ class RankingTable(Resource):
 @ns.route("/players/")
 class Players(Resource):
     @ns.doc("create_player")
+    @ns.response(400, "Invalid player data!")
     @ns.expect(create_player_in)
     @ns.marshal_with(player_out)
     def post(self):

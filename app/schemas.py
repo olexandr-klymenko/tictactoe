@@ -1,6 +1,6 @@
 from marshmallow import fields
 
-from .models import PlayerModel
+from .models import PlayerModel, SeasonModel
 from app import ma
 
 
@@ -110,3 +110,11 @@ class ListPlayersSchema(ma.Schema):
             "collection": ma.URLFor("api.admin_players"),
         }
     )
+
+
+class SeasonSchema(ma.SQLAlchemySchema):
+    class Meta:
+        model = SeasonModel
+
+    season_id = ma.auto_field("id")
+    name = ma.auto_field()
