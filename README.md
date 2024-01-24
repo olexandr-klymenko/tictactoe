@@ -1,6 +1,6 @@
-# Tic-tac-toe game api
+# Tic-tac-toe game API
 
-A Tic-tac-toe game
+A Tic-tac-toe game API
 
 # Features
 * Create/Delete/Read Player details (/api/admin/players/<id>)
@@ -68,10 +68,6 @@ Read more at [Flask-SQLAlchemy's](https://flask-sqlalchemy.palletsprojects.com/e
 It uses [Black](https://github.com/psf/black) for code styling/formatting.
 
 # Usage
-
-## Notes
-
-The rest of the resources are found in `/api` (This is the docs route by default, this can be changed easily).
 
 ## Installing with Poetry
 ```sh
